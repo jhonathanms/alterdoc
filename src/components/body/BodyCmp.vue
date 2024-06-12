@@ -30,6 +30,7 @@
             }
           }"
         />
+        
         <Inplace
           @open="setShowBtnAdd"
           @close="setShowBtnAdd()"
