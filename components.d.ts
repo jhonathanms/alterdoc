@@ -7,12 +7,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AcoesCmp: typeof import('./src/components/body/painelHome/acoes/AcoesCmp.vue')['default']
     BodyCmp: typeof import('./src/components/body/BodyCmp.vue')['default']
     BodyItemCmp: typeof import('./src/components/body/BodyItemCmp.vue')['default']
     Button: typeof import('primevue/button')['default']
     Card: typeof import('primevue/card')['default']
-    CardItemCmp: typeof import('./src/components/body/CardItemCmp.vue')['default']
-    copy: typeof import('./src/components/toolbar/ToolbarConfigCmp copy.vue')['default']
+    CardItemCmp: typeof import('./src/components/body/painelHome/card/CardItemCmp.vue')['default']
+    copy: typeof import('./src/components/body/painelPreview/PreviewCmp copy.vue')['default']
     Div: typeof import('./src/components/body/div.vue')['default']
     Divider: typeof import('primevue/divider')['default']
     Dropdown: typeof import('primevue/dropdown')['default']
@@ -33,6 +34,11 @@ declare module 'vue' {
     Message: typeof import('primevue/message')['default']
     Panel: typeof import('primevue/panel')['default']
     PanelPrincipal: typeof import('./src/components/body/PanelPrincipal.vue')['default']
+    PreviewCmp: typeof import('./src/components/body/painelPreview/PreviewCmp.vue')['default']
+    PreviewCodigo: typeof import('./src/components/body/painelPreview/PreviewCodigo.vue')['default']
+    PreviewCodigoCmp: typeof import('./src/components/body/painelPreview/PreviewCodigoCmp.vue')['default']
+    PreviewCpm: typeof import('./src/components/body/painelPreview/PreviewCpm.vue')['default']
+    PreviewHtmlCmp: typeof import('./src/components/body/painelPreview/PreviewHtmlCmp.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SelectButton: typeof import('primevue/selectbutton')['default']

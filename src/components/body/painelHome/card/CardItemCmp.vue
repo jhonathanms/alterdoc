@@ -1,6 +1,7 @@
 <template>
   <Card
     class="card_item"
+    :style="{ borderLeftColor: `var(${getBorderColor})` }"
     :pt="{
       title: {
         class: 'p-0 text-base'
@@ -19,16 +20,14 @@
       }
     }"
   >
-    <template #title>API SPICE</template>
+    <template #title>{{ data.titulo }}</template>
 
-    <template #subtitle>
-      Descrição Lorem ipsum, dolor sit amet consectetur adipisicing elit.asdasdasdasdasd
-    </template>
+    <template #subtitle>{{ data.subtitulo }}</template>
 
     <template #footer>
       <div class="card_footer">
         <Tag
-          value="Titulo"
+          :value="data.tipo"
           rounded
           class="w-3"
           style="height: 20px; color: var(--surface-500); background-color: var(--bg-default)"
@@ -39,7 +38,7 @@
             outlined
             severity="secondary"
             icon="pi pi-pen-to-square"
-            pt:root:class="h-2rem w-2rem "
+            pt:root:class="h-2rem w-2rem"
           />
           <Button
             icon="pi pi-clone"
@@ -61,13 +60,20 @@
   </Card>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { computed } from 'vue'
+import { CardItemTagColor } from './CardItemTagColor'
+import type { ICard } from '@/components/body/interfaces/ICard';
+
+const data = withDefaults(defineProps<ICard>(), { tipo: 'default' })
+const getBorderColor = computed(() => CardItemTagColor[data.tipo])
+</script>
 
 <style scoped lang="scss">
 @import 'primeflex/primeflex.scss';
 
 .card_item {
-  @include styleclass('text-sm w-full h-7rem border-left-solid border-left-3 border-primary');
+  @include styleclass('text-sm w-full h-7rem border-left-solid border-left-3');
 }
 
 .card_footer {

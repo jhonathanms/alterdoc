@@ -17,6 +17,7 @@
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
     "primevue": "^3.52.0",
+    "prismjs": "^1.29.0",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
@@ -24,6 +25,7 @@
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
     "@types/node": "^20.12.5",
+    "@types/prismjs": "^1.26.4",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vitejs/plugin-vue-jsx": "^3.1.0",
     "@vue/eslint-config-prettier": "^9.0.0",
