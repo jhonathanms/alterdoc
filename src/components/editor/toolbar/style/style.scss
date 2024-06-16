@@ -1,0 +1,9 @@
+@import 'primeflex/primeflex.scss';
+
+.container_logo {
+  @include styleclass('flex justify-content-center w-10rem');
+}
+
+.toolbar_base {
+  @include styleclass('flex flex-column gap-4 h-full text-xs');
+}
