@@ -1,7 +1,7 @@
 <template>
-  <span class="container_footer"
+  <footer class="container_footer"
     >© 1989-{{ new Date().getFullYear() }} - Alterdata Software - Direitos Reservados
-  </span>
+  </footer>
 </template>
 
 <script setup lang="ts"></script>

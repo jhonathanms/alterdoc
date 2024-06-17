@@ -3,17 +3,33 @@
     <h3>Configurações</h3>
     <div class="flex flex-column gap-2">
       <label for="formato">Formato</label>
-      <InputText id="formato" size="small" disabled modelValue="1A" />
+      <InputText id="formato" size="small" disabled v-model="store.projeto.formato" />
     </div>
-    <div class="flex flex-column gap-2">
+    <div class="flex flex-column gap-2" v-if="!!store.projeto.local">
       <label for="username">Local</label>
-      <InputText size="small" disabled modelValue="C:\AlterdataDSN\repositorios\projetoSpice\backend\spice-api\api\docs" />
+      <InputText size="small" disabled v-model="store.projeto.local" />
     </div>
     <div class="flex flex-column gap-2">
       <label for="username">Host</label>
-      <InputText size="small" modelValue="http://127.0.0.1:8877/v1" />
+      <InputText size="small" v-model="store.projeto.host" />
     </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { storageConstants } from '@/service/constants/storageConstants';
+import type { IProjeto } from '@/service/interfaces/IProjeto';
+import storageService from '@/service/storageService';
+import { useStoreBase } from '@/stores/storeBase';
+import { onMounted } from 'vue';
+
+const store = useStoreBase()
+
+onMounted(() => {
+  const projeto = storageService.getItem(storageConstants.PROJETO) as IProjeto
+
+  if (!store.projeto.id && projeto) {
+    store.setProjeto(projeto)
+  }
+})
+</script>

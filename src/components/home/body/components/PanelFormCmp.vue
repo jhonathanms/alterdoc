@@ -1,27 +1,41 @@
 <template>
-  <div class="flex flex-column w-full">
+  <div class="flex flex-column w-full h-20rem">
     <span class="text-xl font-bold text-600">Preencha os dados a seguir:</span>
 
-    <div class="flex flex-column gap-3 mt-4">
-      <div class="flex flex-column gap-2 ">
+    <div class="flex flex-column gap-3 mt-4 pb-4 px-2 overflow-y-auto">
+      <div class="flex flex-column gap-2">
         <label for="formato">Nome do projeto</label>
-        <InputText id="formato" size="small" />
+        <InputText id="formato" size="small" v-model="store.projeto.nomeProjeto" />
       </div>
       <div class="flex flex-column gap-2">
         <label for="formato">Nome do arquivo</label>
-        <InputText id="formato" size="small" modelValue="doc.apib" />
+        <InputText
+          id="formato"
+          size="small"
+          placeholder="default: doc.apib"
+          v-model="store.projeto.nomeArquivo"
+        />
       </div>
       <div class="flex flex-column gap-2">
         <label for="username">Formato</label>
-        <InputText size="small" modelValue="1A" disabled/>
+        <InputText
+          size="small"
+          disabled
+          placeholder="default: 1A"
+          v-model="store.projeto.formato"
+        />
       </div>
       <div class="flex flex-column gap-2">
         <label for="username">Host</label>
-        <InputText size="small" placeholder="http://127.0.0.1:8877/v1" />
+        <InputText
+          size="small"
+          placeholder="ex.: http://127.0.0.1:8877/v1"
+          v-model="store.projeto.host"
+        />
       </div>
     </div>
 
-    <div class="flex gap-2 justify-content-between mt-4">
+    <div class="flex gap-2 justify-content-between mt-2">
       <Button
         label="Voltar"
         text
@@ -35,34 +49,51 @@
         severity="primary"
         icon="pi pi-arrow-right"
         iconPos="right"
-        @click="handleAbrirEditor"
+        :disabled="isFormInvalido"
+        @click="handleFinalizar"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useStoreBase } from '@/stores/storeBase';
-import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { storageConstants } from '@/service/constants/storageConstants'
+import storageService from '@/service/storageService'
+import { useStoreBase } from '@/stores/storeBase'
+import { computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { v4 as uuidv4 } from 'uuid'
 
 const router = useRouter()
 const store = useStoreBase()
 
-const handleAbrirEditor = () => {
+const handleFinalizar = () => {
+  const projeto = { id: uuidv4(), ...store.projeto }
+  storageService.setItem(storageConstants.PROJETO, projeto)
+
   router.push({ path: '/editor' })
 }
 
+const isFormInvalido = computed(() => {
+  return !(
+    !!store.projeto.nomeProjeto &&
+    !!store.projeto.nomeArquivo &&
+    !!store.projeto.formato &&
+    !!store.projeto.host
+  )
+})
+
 const handleVoltar = () => {
-  store.setTogglePanelHome();
+  store.setTogglePanelHome()
 }
 
 onMounted(() => {
-  document.getElementById('formato')?.focus();
+  document.getElementById('formato')?.focus()
 })
+
 </script>
 
-<style>
+<style scoped lang="scss">
 label {
   font-size: small;
 }

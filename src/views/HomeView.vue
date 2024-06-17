@@ -1,10 +1,10 @@
 <template>
   <div class="container_base">
     <div class="container_principal">
-      <IconLogo class="w-12rem mb-6"/>
+      <IconLogo class="w-12rem  mb-6"/>
       <BodyCmp />
-      <FooterCmp />
     </div>
+    <FooterCmp />
   </div>
 </template>
 
@@ -19,7 +19,7 @@ import FooterCmp from '@/components/home/footer/HomeFooterCmp.vue'
 
 .container_base {
   @include styleclass(
-    'flex align-items-center justify-content-center w-screen h-screen surface-100'
+    'flex align-items-center justify-content-center w-screen h-screen surface-100 p-3'
   );
 }
 

@@ -1,7 +1,9 @@
 <template>
-  <PanelHomeCmp v-if="store.togglePanelHome" />
-  <RecentesCmp v-if="store.togglePanelHome && store.recentes.length" />
-  <PanelFormCmp v-if="!store.togglePanelHome" />
+  <main class="container_body">
+    <PanelHomeCmp v-if="store.togglePanelHome" />
+    <RecentesCmp v-if="store.togglePanelHome && store.recentes.length" />
+    <PanelFormCmp v-if="!store.togglePanelHome" />
+  </main>
 </template>
 
 <script setup lang="ts">
@@ -24,3 +26,12 @@ onMounted(() => {
   }
 })
 </script>
+
+<style lang="scss" scoped>
+@import 'primeflex/primeflex.scss';
+
+.container_body {
+  height: calc(100% - 100px);
+  @include styleclass('flex flex-column w-full');
+}
+</style>

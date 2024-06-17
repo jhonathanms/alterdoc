@@ -6,9 +6,7 @@ import router from './router'
 import PrimeVue from 'primevue/config';
 import './main.css';
 
-// import 'primevue/resources/themes/lara-light-blue/theme.css'
-// import 'primevue/resources/themes/aura-light-lime/theme.css'
-import 'primevue/resources/themes/lara-light-cyan/theme.css'
+import 'primevue/resources/themes/lara-light-purple/theme.css'
 import 'primeflex/primeflex.css'
 import 'primeicons/primeicons.css'
 import 'prismjs/themes/prism-tomorrow.css';

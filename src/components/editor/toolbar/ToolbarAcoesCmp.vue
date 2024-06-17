@@ -47,12 +47,20 @@
 </template>
 
 <script setup lang="ts">
+import { storageConstants } from '@/service/constants/storageConstants';
+import type { IProjeto } from '@/service/interfaces/IProjeto';
+import storageService from '@/service/storageService';
+import { useStoreBase } from '@/stores/storeBase';
 import { onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const store = useStoreBase()
 
 const handleCancelar = (() => {
+  store.setProjeto({} as IProjeto)
+  store.setTogglePanelHome(true)
+  storageService.remove(storageConstants.PROJETO)
   router.push({ path: '/' })
 });
 

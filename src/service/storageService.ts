@@ -20,7 +20,7 @@ const storageService = {
 
   remove(chave: string) {
     const prefixedKey = PREFIXO + chave
-    localStorage.remove(prefixedKey)
+    localStorage.removeItem(prefixedKey)
   },
 
   clear() {
