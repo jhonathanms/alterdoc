@@ -1,13 +1,13 @@
 <template>
-  <div class="flex flex-column gap-1 mt-3">
+  <div class="flex flex-column gap-1 mt-2">
     <h3>Configurações</h3>
+    <div class="flex flex-column gap-2">
+      <label for="formato">Nome do projeto</label>
+      <InputText id="formato" size="small" v-model="store.projeto.nomeProjeto" />
+    </div>
     <div class="flex flex-column gap-2">
       <label for="formato">Formato</label>
       <InputText id="formato" size="small" disabled v-model="store.projeto.formato" />
-    </div>
-    <div class="flex flex-column gap-2" v-if="!!store.projeto.local">
-      <label for="username">Local</label>
-      <InputText size="small" disabled v-model="store.projeto.local" />
     </div>
     <div class="flex flex-column gap-2">
       <label for="username">Host</label>
@@ -17,11 +17,11 @@
 </template>
 
 <script setup lang="ts">
-import { storageConstants } from '@/service/constants/storageConstants';
-import type { IProjeto } from '@/service/interfaces/IProjeto';
-import storageService from '@/service/storageService';
-import { useStoreBase } from '@/stores/storeBase';
-import { onMounted } from 'vue';
+import { storageConstants } from '@/service/constants/storageConstants'
+import type { IProjeto } from '@/service/interfaces/IProjeto'
+import storageService from '@/service/storageService'
+import { useStoreBase } from '@/stores/storeBase'
+import { onMounted } from 'vue'
 
 const store = useStoreBase()
 

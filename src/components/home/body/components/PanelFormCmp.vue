@@ -90,7 +90,6 @@ const handleVoltar = () => {
 onMounted(() => {
   document.getElementById('formato')?.focus()
 })
-
 </script>
 
 <style scoped lang="scss">

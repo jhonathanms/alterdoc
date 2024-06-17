@@ -1,7 +1,7 @@
 <template>
   <div class="container_base">
     <div class="container_principal">
-      <IconLogo class="w-12rem  mb-6"/>
+      <IconLogo class="w-12rem mb-6" />
       <BodyCmp />
     </div>
     <FooterCmp />

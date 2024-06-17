@@ -1,6 +1,6 @@
 export interface IRecentes {
-    id?: string,
-    nomeProjeto?: string,
-    localProjeto?: string,
-    ultimoAcesso?: string
+  id?: string
+  nomeProjeto?: string
+  localProjeto?: string
+  ultimoAcesso?: string
 }

@@ -17,11 +17,11 @@
 </template>
 
 <script setup lang="ts">
-import { useStoreBase } from '@/stores/storeBase';
-import SelectButton from 'primevue/selectbutton';
-import { computed } from 'vue';
+import { useStoreBase } from '@/stores/storeBase'
+import SelectButton from 'primevue/selectbutton'
+import { computed } from 'vue'
 
-const store = useStoreBase();
+const store = useStoreBase()
 
 const getAno = computed(() => new Date().getFullYear())
 </script>

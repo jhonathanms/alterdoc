@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import BodyCmp from '@/components/editor/body/BodyCmp.vue';
-import FooterCmp from '@/components/editor/footer/FooterCmp.vue';
-import ToolbarCmp from '@/components/editor/toolbar/ToolbarCmp.vue';
+import BodyCmp from '@/components/editor/body/BodyCmp.vue'
+import FooterCmp from '@/components/editor/footer/FooterCmp.vue'
+import ToolbarCmp from '@/components/editor/toolbar/ToolbarCmp.vue'
 </script>
 
 <template>

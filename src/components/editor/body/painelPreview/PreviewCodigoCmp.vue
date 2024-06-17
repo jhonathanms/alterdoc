@@ -3,7 +3,12 @@
     <div v-if="store.conteudoMD" class="container_codigo h-full">{{ store.conteudoMD }}</div>
     <div v-else class="flex align-items-center justify-content-center w-full h-full surface-200">
       <div class="flex align-items-center flex-column gap-3">
-        <img class="text-primary" alt="icone conteudo não encontrado" src="../../../../assets/icon/icon-nao-encontrado.svg" width="80px" >
+        <img
+          class="text-primary"
+          alt="icone conteudo não encontrado"
+          src="../../../../assets/icon/icon-nao-encontrado.svg"
+          width="80px"
+        />
         <span class="text-gray-500">Nenhum conteúdo Markdown encontrado.</span>
       </div>
     </div>

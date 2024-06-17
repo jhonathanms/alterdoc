@@ -46,10 +46,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const showBtnAdd = ref(true);
+const showBtnAdd = ref(true)
 
 const setShowBtnAdd = () => {
   showBtnAdd.value = !showBtnAdd.value
 }
-
 </script>

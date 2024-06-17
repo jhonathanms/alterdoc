@@ -63,7 +63,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { CardItemTagColor } from './CardItemTagColor'
-import type { ICard } from '@/components/editor/body/interfaces/ICard';
+import type { ICard } from '@/components/editor/body/interfaces/ICard'
 
 const data = withDefaults(defineProps<ICard>(), { tipo: 'default' })
 const getBorderColor = computed(() => CardItemTagColor[data.tipo])

@@ -33,7 +33,7 @@
 
     <SplitterPanel class="flex justify-content-center" :size="75" :minSize="50">
       <PreviewHtmlCmp v-if="store.togglePreview === 'Html'" />
-      <PreviewCodigoCmp v-else/>
+      <PreviewCodigoCmp v-else />
     </SplitterPanel>
   </Splitter>
 </template>
@@ -45,7 +45,7 @@ import CardItemCmp from './painelHome/card/CardItemCmp.vue'
 import PreviewCodigoCmp from './painelPreview/PreviewCodigoCmp.vue'
 import PreviewHtmlCmp from './painelPreview/PreviewHtmlCmp.vue'
 
-const  store = useStoreBase()
+const store = useStoreBase()
 </script>
 
 <style scoped lang="scss">

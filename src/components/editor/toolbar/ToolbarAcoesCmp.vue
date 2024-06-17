@@ -2,6 +2,7 @@
   <div class="flex flex-column gap-2">
     <Button
       type="button"
+      size="small"
       class="w-full"
       label="Salvar"
       severity="secondary"
@@ -15,6 +16,7 @@
     />
     <Button
       type="button"
+      size="small"
       class="w-full"
       label="Exportar"
       outlined
@@ -29,6 +31,7 @@
     />
     <Button
       type="button"
+      size="small"
       class="w-full"
       label="Cancelar"
       outlined
@@ -47,22 +50,22 @@
 </template>
 
 <script setup lang="ts">
-import { storageConstants } from '@/service/constants/storageConstants';
-import type { IProjeto } from '@/service/interfaces/IProjeto';
-import storageService from '@/service/storageService';
-import { useStoreBase } from '@/stores/storeBase';
-import { onMounted, onUnmounted } from 'vue';
+import { storageConstants } from '@/service/constants/storageConstants'
+import type { IProjeto } from '@/service/interfaces/IProjeto'
+import storageService from '@/service/storageService'
+import { useStoreBase } from '@/stores/storeBase'
+import { onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const store = useStoreBase()
 
-const handleCancelar = (() => {
+const handleCancelar = () => {
   store.setProjeto({} as IProjeto)
   store.setTogglePanelHome(true)
   storageService.remove(storageConstants.PROJETO)
   router.push({ path: '/' })
-});
+}
 
 const handleKeydown = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
@@ -73,10 +76,9 @@ const handleKeydown = (event: KeyboardEvent) => {
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown)
-});
+})
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown)
-});
-
+})
 </script>

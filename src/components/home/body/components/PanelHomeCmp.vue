@@ -24,12 +24,12 @@
 </template>
 
 <script setup lang="ts">
-import { storageConstants } from '@/service/constants/storageConstants';
-import type { IProjeto } from '@/service/interfaces/IProjeto';
-import storageService from '@/service/storageService';
-import { useStoreBase } from '@/stores/storeBase';
-import { v4 as uuidv4 } from 'uuid';
-import { useRouter } from 'vue-router';
+import { storageConstants } from '@/service/constants/storageConstants'
+import type { IProjeto } from '@/service/interfaces/IProjeto'
+import storageService from '@/service/storageService'
+import { useStoreBase } from '@/stores/storeBase'
+import { v4 as uuidv4 } from 'uuid'
+import { useRouter } from 'vue-router'
 
 const store = useStoreBase()
 const router = useRouter()
@@ -38,7 +38,7 @@ const handleAbrirForm = () => {
   store.setTogglePanelHome()
 }
 
-function extractFormatAndHost(markdown: string): { format: string; host: string, title: string } {
+function extractFormatAndHost(markdown: string): { format: string; host: string; title: string } {
   const formatMatch = markdown.match(/FORMAT:\s*(\S+)/)
   const hostMatch = markdown.match(/HOST:\s*(\S+)/)
   const titleMatch = markdown.match(/^#\s*(.+)/m)
@@ -46,7 +46,7 @@ function extractFormatAndHost(markdown: string): { format: string; host: string,
   return {
     format: formatMatch ? formatMatch[1] : '',
     host: hostMatch ? hostMatch[1] : '',
-    title: titleMatch ? titleMatch[1] : '',
+    title: titleMatch ? titleMatch[1] : ''
   }
 }
 

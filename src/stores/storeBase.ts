@@ -1,8 +1,8 @@
-import type { IProjeto } from '@/service/interfaces/IProjeto';
-import type { IRecentes } from '@/service/interfaces/IRecentes';
-import { defineStore } from 'pinia';
-import { v4 as uuidv4 } from 'uuid';
-import { reactive, ref } from 'vue';
+import type { IProjeto } from '@/service/interfaces/IProjeto'
+import type { IRecentes } from '@/service/interfaces/IRecentes'
+import { defineStore } from 'pinia'
+import { v4 as uuidv4 } from 'uuid'
+import { reactive, ref } from 'vue'
 
 export const useStoreBase = defineStore('storeBase', () => {
   const togglePreview = ref<'Html' | 'Codigo'>('Codigo')
@@ -35,9 +35,8 @@ export const useStoreBase = defineStore('storeBase', () => {
       projeto.id = uuidv4()
       projeto.nomeProjeto = ''
       projeto.host = ''
-      
     } else {
-      projeto.id =value.id
+      projeto.id = value.id
       projeto.nomeProjeto = value.nomeProjeto
       projeto.host = value.host
       projeto.nomeArquivo = value.nomeArquivo

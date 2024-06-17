@@ -7,5 +7,5 @@ export const CardItemTagColor = {
   tabela: '--primary-color',
   grupo: '--indigo-500',
   alerta: '--red-500',
-  default: '--gray-700',
+  default: '--gray-700'
 }
