@@ -1,0 +1,17 @@
+@import 'primeflex/primeflex.scss';
+
+$height_default: calc(100vh - 65px);
+
+.splitter_base {
+  height: $height_default;
+  @include styleclass('w-full p-0');
+}
+
+.splitter_card_itens {
+  height: calc(100vh - 150px);
+  @include styleclass('flex flex-column align-items-center gap-3 w-full p-3 overflow-y-auto');
+}
+
+iframe {
+  border: none;
+}
