@@ -55,6 +55,7 @@ import { useConfirm } from 'primevue/useconfirm'
 import { onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import ConfirmDialogCmp from './ConfirmDialogCmp.vue'
+import type { FilePickerOptions } from 'env';
 
 const router = useRouter()
 const store = useStoreBase()
@@ -83,7 +84,19 @@ const handleSalvar = async () => {
   const blob = new Blob([store.markdown], { type: 'text/markdown' })
 
   try {
-    const fileHandle = await window.showSaveFilePicker()
+    const options: FilePickerOptions = {
+      suggestedName: store.projeto.nomeArquivo,
+      types: [
+        {
+          description: 'Arquivo markdown blueprint',
+          accept: {
+            'text/markdown': ['.apib']
+          }
+        }
+      ]
+    };
+
+    const fileHandle = await window.showSaveFilePicker(options)
     const writable = await fileHandle.createWritable()
     await writable.write(blob)
     await writable.close()

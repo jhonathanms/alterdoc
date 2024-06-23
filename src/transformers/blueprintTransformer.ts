@@ -1,20 +1,10 @@
-import type {
-  ICitacao,
-  ICodigo,
-  IConteudo,
-  IGrupo,
-  ILista,
-  INota,
-  IParagrafo,
-  IParametroProps,
-  IParametros,
-  IRequestResponse,
-  ITabela,
-  TipoConteudo
-} from '../model/IBlueprint'
+import type { IConteudo, TipoConteudo, INota, IGrupo, IParagrafo, IParametros, IRequestResponse, IParametroProps, ICitacao, ICodigo, ILista, ITabela } from "@/model/IBlueprint"
+
 
 const toObj = (input: string): IConteudo[] => {
-  return extrairComponentes(input)
+  const conteudo = extrairComponentes(input)
+  console.log('json', JSON.stringify(conteudo, null, 2))
+  return conteudo
 }
 
 function extrairComponentes(markdown: string): IConteudo[] {
@@ -55,9 +45,9 @@ function extrairBloco(
   } else if (linhaAtual.startsWith('+ Request') || linhaAtual.startsWith('+ Response')) {
     i = extrairDetalhesRequest(linhas, i, componentes)
   } else if (
-        linhaAtual.includes('|') 
-        && (linhaAtual.match(/^\s*:?-{1,}:?\s*(\|\s*:?-*:?\s*)+$/) || proximaLinha.match(/^\s*:?-{1,}:?\s*(\|\s*:?-*:?\s*)+$/))
-      ) {
+    linhaAtual.includes('|')
+    && (linhaAtual.match(/^\s*:?-{1,}:?\s*(\|\s*:?-*:?\s*)+$/) || proximaLinha.match(/^\s*:?-{1,}:?\s*(\|\s*:?-*:?\s*)+$/))
+  ) {
     i = extrairTabela(linhas, i, componentes)
   } else if (linhaAtual) {
     i = extrairParagrafo(markdown, linhas, i, componentes)
@@ -96,8 +86,8 @@ function extrairNota(
   const tipoConteudo: TipoConteudo = tipoNota === 'warning' ? 'alerta' : 'notacao'
 
   componentes.push({ tipoConteudo, titulo, componentes: notaComponentes } as INota)
-  
-  if(!linhas[proximaLinha].startsWith('# Group')) {
+
+  if (!linhas[proximaLinha]?.startsWith('# Group')) {
     proximaLinha++
   }
 
@@ -121,6 +111,7 @@ function extrairGrupo(
   let descricao = ''
   indicePrincipal++
   let proximaLinha = linhas[indicePrincipal]?.trim()
+  
   if (proximaLinha && !proximaLinha.startsWith('#')) {
     descricao = proximaLinha
     indicePrincipal++
@@ -173,15 +164,54 @@ function extrairParagrafo(
 
   if (match) {
     const nivel = match[1].length
-    let texto = match[2].trim()
+    let titulo = match[2].trim()
 
     if (nivel === 1) {
-      componentes.push({ tipoConteudo: 'configuracao', nivel, texto } as IParagrafo)
+      componentes.push({ tipoConteudo: 'configuracao', nivel, texto: titulo } as IParagrafo)
+
     } else {
       const proximaLinha = linhas[i + 1]?.trim()
 
-      if (proximaLinha && !proximaLinha.startsWith('#')) {
-        let descricao = ''
+       /**
+       * Cria uma sessão de paragrafos para o titulo nivel 2 Ex.
+       * ## Sobre
+       * Lorem ispsum Lorem ispsum Lorem ispsum
+       * Lorem ispsum Lorem ispsum Lorem ispsum
+       * Lorem ispsum Lorem ispsum Lorem ispsum
+       * 
+       * ### Subitulo
+       * Lorem ispsum Lorem ispsum Lorem ispsum
+
+       **/
+       const regex_is_titulo_endpoint = /^.*\[\/+.*\]$/;
+       const regex_is_titulo_request = /^.*\[(POST|GET|PUT|DELETE|PATCH|OPTIONS|HEAD)\]$/;
+       
+      if (nivel === 2 && !titulo.match(regex_is_titulo_endpoint) && !titulo.match(regex_is_titulo_request)) {
+        i += proximaLinha ? 1 : 2
+        const sessaoParagrafo: IConteudo[] = []
+
+        while (
+          i < linhas.length &&
+          linhas[i].trim() &&
+          !linhas[i].startsWith('## ') &&
+          !linhas[i].startsWith(':::')
+        ) {
+          const resultado = extrairBloco(markdown, linhas, i, sessaoParagrafo)
+          i = linhas[resultado]?.trim() ? resultado : resultado + 1
+        }
+
+        componentes.push({ tipoConteudo: 'paragrafo', nivel, titulo, componentes: sessaoParagrafo } as IParagrafo)
+        return i;
+      }
+
+
+      /**
+       * Agrupa em um paragrafo um titulo com paragrafos simples descritos na linha seguinte. Ex.
+       * ## Sobre
+       * Lorem ispsum Lorem ispsum Lorem ispsum
+       **/
+      else if (proximaLinha && !proximaLinha.startsWith('#')) {
+        let texto = ''
         i++
 
         while (
@@ -190,35 +220,36 @@ function extrairParagrafo(
           !linhas[i].startsWith('#') &&
           !linhas[i].startsWith(':::')
         ) {
-          descricao += ' ' + linhas[i].trim()
+          texto += ' ' + linhas[i].trim()
           i++
         }
 
-        texto = texto.replace('<i class="fa fa-warning"></i>', '').trim()
-        componentes.push({ tipoConteudo: 'paragrafo', nivel, texto, descricao } as IParagrafo)
+        titulo = titulo.replace('<i class="fa fa-warning"></i>', '').trim()
+        componentes.push({ tipoConteudo: 'paragrafo', nivel, titulo, texto } as IParagrafo)
+
       } else {
-        componentes.push({ tipoConteudo: 'paragrafo', nivel, texto } as IParagrafo)
+        componentes.push({ tipoConteudo: 'paragrafo', nivel, titulo } as IParagrafo)
       }
     }
 
   } else if (linhaAtual.includes('FORMAT:') || linhaAtual.includes('HOST:')) {
-    const descricao = linhaAtual.substring(0, linhaAtual.indexOf(':')).trim()
+    const titulo = linhaAtual.substring(0, linhaAtual.indexOf(':')).trim()
     const texto = linhaAtual.substring(linhaAtual.indexOf(':') + 1).trim()
-    componentes.push({ tipoConteudo: 'configuracao', nivel: 0, descricao, texto } as IParagrafo)
-  
+    componentes.push({ tipoConteudo: 'configuracao', nivel: 0, titulo, texto } as IParagrafo)
+
   } else if (linhaAtual.includes('|') && linhas[i + 1].trim().includes('--:')) {
     i++
 
   }
   // Agrupamento de Paragrafos simples de continuação.
   else if (linhaAtual && !linhaAtual.startsWith('#')) {
-    let descricao = ''
+    let texto = ''
 
     while (i < linhas.length && linhas[i].trim() && !linhas[i].startsWith('#')) {
-      descricao += ' ' + linhas[i].trim()
+      texto += ' ' + linhas[i].trim()
       i++
     }
-    componentes.push({ tipoConteudo: 'paragrafo', nivel: 0, texto: descricao } as IParagrafo)
+    componentes.push({ tipoConteudo: 'paragrafo', nivel: 0, texto } as IParagrafo)
 
   } else {
     componentes.push({ tipoConteudo: 'paragrafo', nivel: 0, texto: linhaAtual } as IParagrafo)
@@ -237,7 +268,7 @@ function extrairRequest(
   let i = indice
   const linhaAtual = linhas[i].trim()
   const match = linhaAtual.match(/^###\s*(.*)\s*\[(.*)\]$/)
-  
+
   if (match) {
     const texto = match[1].trim()
     const verbo = match[2].trim()
@@ -252,8 +283,10 @@ function extrairRequest(
     ) {
       if (linhas[i].startsWith('+ Request')) {
         i = extrairDetalhesRequest(linhas, i, requestComponentes)
+
       } else if (linhas[i].startsWith('+ Response')) {
         i = extrairDetalhesRequest(linhas, i, requestComponentes)
+
       } else {
         const result = extrairBloco(markdown, linhas, i, requestComponentes)
         i = result
@@ -305,6 +338,12 @@ function extrairDetalhesRequest(
   // Verifica se a prox linha contem info, se não pula para proxima
   i = linhas[i + 1].trim() ? i + 1 : i + 2
 
+  /** Os parametros são declarados dentro de cada requisição request ou response
+   * request >>
+   *   > parameters
+   *   > headers
+   *   > body
+   * ***/
   while (i < linhas.length) {
     const linha = linhas[i].trim()
     if (linha.startsWith('+ Parameters')) {
@@ -471,12 +510,12 @@ function extrairTabela(
       linha atual: A | B ou --: | --  <-> linha anterior a A | B;
   */
   const isCabecalhoNaLinhaAnterior = linhaAtual.match(/^\s*:?-{1,}:?\s*(\|\s*:?-*:?\s*)+$/)
-  const cabecalho =  isCabecalhoNaLinhaAnterior ? linhaAnterior : linhaAtual
+  const cabecalho = isCabecalhoNaLinhaAnterior ? linhaAnterior : linhaAtual
 
   //Separa as colunas
   const colunas = cabecalho.split('|').map((coluna) => coluna.trim().toLowerCase())
   const linhasTabela: { [key: string]: string }[] = []
-  
+
   i += isCabecalhoNaLinhaAnterior ? 1 : 2
 
   while (i < linhas.length && linhas[i].includes('|')) {

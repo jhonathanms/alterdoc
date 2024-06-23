@@ -19,6 +19,7 @@ export type TipoConteudo =
 
 export interface IConteudo {
   tipoConteudo: TipoConteudo
+  componentes?: IConteudo[]
 }
 
 export interface ICodigo extends IConteudo {
@@ -28,13 +29,12 @@ export interface ICodigo extends IConteudo {
 
 export interface INota extends IConteudo {
   titulo?: string
-  componentes: IConteudo[]
 }
 
 export interface IParagrafo extends IConteudo {
   nivel: number
+  titulo?: string
   texto: string
-  descricao?: string
 }
 
 export interface ICitacao extends IConteudo {
@@ -52,7 +52,6 @@ export interface ITabela extends IConteudo {
 
 export interface IGrupo extends IConteudo {
   titulo: string
-  componentes: IConteudo[]
 }
 
 export interface IRequestResponse extends IConteudo {
