@@ -16,6 +16,7 @@ export type TipoConteudo =
   | 'citacao'
   | 'tabela'
   | 'lista'
+  | 'parametro'
 
 export interface IConteudo {
   tipoConteudo: TipoConteudo
@@ -57,17 +58,21 @@ export interface IGrupo extends IConteudo {
 export interface IRequestResponse extends IConteudo {
   tipo: 'request' | 'response'
   status?: number
+  verbo?: string
   formato: string
   headers?: string[]
-  parametros?: IParametros[]
   corpo?: string
 }
 
-export interface IParametros {
-  [key: string]: IParametroProps
+export interface IParametros extends IConteudo{
+  parametros: IParametroProps[]
 }
 
-export interface IParametroProps {
+export interface IParametroProps{
+    [key: string]: IParametroSubProps
+}
+
+export interface IParametroSubProps {
   nome: string
   descricao: string
   tipo?: string

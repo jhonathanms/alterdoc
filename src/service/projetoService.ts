@@ -1,7 +1,7 @@
 import type { IConteudo, IParagrafo } from "@/model/IBlueprint"
 import type { IProjeto } from "@/model/IProjeto"
 import { blueprintTransformer } from "@/transformers/blueprintTransformer"
-import { storageConstants } from "./constants/storageConstants"
+import { storageConstants } from "../constants/storageConstants"
 import storageService from '@/service/storageService'
 import { v4 as uuidv4 } from 'uuid'
 

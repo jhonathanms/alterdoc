@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import type { IProjeto } from '@/model/IProjeto'
-import { storageConstants } from '@/service/constants/storageConstants'
+import { storageConstants } from '@/constants/storageConstants'
 import storageService from '@/service/storageService'
 import { useStoreBase } from '@/stores/storeBase'
 import { useConfirm } from 'primevue/useconfirm'

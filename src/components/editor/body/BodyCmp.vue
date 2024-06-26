@@ -2,7 +2,7 @@
   <Splitter class="splitter_base">
     <SplitterPanel class="flex w-full h-full relative" :size="25" :minSize="30">
       <div class="splitter_card_itens">
-        <template class="w-full" v-for="(item, index) in store.projeto.conteudo" :key="index">
+        <template v-for="(item, index) in store.projeto.conteudo" :key="index">
           <!-- Criar um construtor de cards com base no tipo. -->
           <CardItemCmp
             :titulo="(item as IParagrafo).titulo "

@@ -13,7 +13,6 @@ declare module 'vue' {
     Button: typeof import('primevue/button')['default']
     Card: typeof import('primevue/card')['default']
     CardItemCmp: typeof import('./src/components/editor/body/painelHome/card/CardItemCmp.vue')['default']
-    ConfirmDialog: typeof import('./src/components/editor/toolbar/ConfirmDialog.vue')['default']
     ConfirmDialogCmp: typeof import('./src/components/editor/toolbar/ConfirmDialogCmp.vue')['default']
     FileUpload: typeof import('primevue/fileupload')['default']
     FooterCmp: typeof import('./src/components/editor/footer/FooterCmp.vue')['default']

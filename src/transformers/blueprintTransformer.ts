@@ -1,5 +1,21 @@
-import type { IConteudo, TipoConteudo, INota, IGrupo, IParagrafo, IParametros, IRequestResponse, IParametroProps, ICitacao, ICodigo, ILista, ITabela } from "@/model/IBlueprint"
+import { blueprintConstants } from '@/constants/blueprintConstants'
+import type {
+  ICitacao,
+  ICodigo,
+  IConteudo,
+  IGrupo,
+  ILista,
+  INota,
+  IParagrafo,
+  IParametroProps,
+  IParametroSubProps,
+  IParametros,
+  IRequestResponse,
+  ITabela,
+  TipoConteudo
+} from '@/model/IBlueprint'
 
+import lodash from 'lodash';
 
 const toObj = (input: string): IConteudo[] => {
   const conteudo = extrairComponentes(input)
@@ -28,9 +44,9 @@ function extrairBloco(
 ): number {
   let i = indice
   const linhaAtual = linhas[i].trim()
-  const proximaLinha = linhas[i + 1]?.trim();
+  const proximaLinha = linhas[i + 1]?.trim()
 
-  if (linhaAtual.startsWith('::: note') || linhaAtual.startsWith('::: warning')) {
+  if (linhaAtual.match(blueprintConstants.REGEX_VERIFICA_NOTACAO_NOTE_OU_WARNING)) {
     i = extrairNota(markdown, linhas, i, componentes)
   } else if (linhaAtual.startsWith('# Group')) {
     i = extrairGrupo(markdown, linhas, i, componentes)
@@ -42,11 +58,14 @@ function extrairBloco(
     i = extrairCodigo(linhas, i, componentes)
   } else if (linhaAtual.match(/^[0-9]+\./) || linhaAtual.startsWith('*')) {
     i = extrairLista(linhas, i, componentes)
+  } else if (linhaAtual.startsWith('+ Parameters')) {
+    i = extrairParametros(linhas, i, componentes)
   } else if (linhaAtual.startsWith('+ Request') || linhaAtual.startsWith('+ Response')) {
     i = extrairDetalhesRequest(linhas, i, componentes)
   } else if (
-    linhaAtual.includes('|')
-    && (linhaAtual.match(/^\s*:?-{1,}:?\s*(\|\s*:?-*:?\s*)+$/) || proximaLinha.match(/^\s*:?-{1,}:?\s*(\|\s*:?-*:?\s*)+$/))
+    linhaAtual.includes('|') &&
+    (linhaAtual.match(blueprintConstants.REGEX_IS_TABELA) ||
+      proximaLinha.match(blueprintConstants.REGEX_IS_TABELA))
   ) {
     i = extrairTabela(linhas, i, componentes)
   } else if (linhaAtual) {
@@ -71,8 +90,9 @@ function extrairNota(
 
   while (
     proximaLinha < linhas.length &&
-    !linhas[proximaLinha].startsWith(':::') &&
-    !linhas[proximaLinha].startsWith('# Group')
+    !linhas[proximaLinha].trim().match(blueprintConstants.REGEX_VERIFICA_NOTACAO_NOTE_FECHAMENTO) &&
+    !linhas[proximaLinha].trim().startsWith('# Group') &&
+    !linhas[proximaLinha].trim().startsWith('+')
   ) {
     const result = extrairBloco(markdown, linhas, proximaLinha, notaComponentes)
     proximaLinha = result
@@ -87,7 +107,7 @@ function extrairNota(
 
   componentes.push({ tipoConteudo, titulo, componentes: notaComponentes } as INota)
 
-  if (!linhas[proximaLinha]?.startsWith('# Group')) {
+  if (!linhas[proximaLinha]?.startsWith('# Group') && !linhas[proximaLinha]) {
     proximaLinha++
   }
 
@@ -111,7 +131,7 @@ function extrairGrupo(
   let descricao = ''
   indicePrincipal++
   let proximaLinha = linhas[indicePrincipal]?.trim()
-  
+
   if (proximaLinha && !proximaLinha.startsWith('#')) {
     descricao = proximaLinha
     indicePrincipal++
@@ -168,11 +188,10 @@ function extrairParagrafo(
 
     if (nivel === 1) {
       componentes.push({ tipoConteudo: 'configuracao', nivel, texto: titulo } as IParagrafo)
-
     } else {
       const proximaLinha = linhas[i + 1]?.trim()
 
-       /**
+      /**
        * Cria uma sessão de paragrafos para o titulo nivel 2 Ex.
        * ## Sobre
        * Lorem ispsum Lorem ispsum Lorem ispsum
@@ -183,10 +202,11 @@ function extrairParagrafo(
        * Lorem ispsum Lorem ispsum Lorem ispsum
 
        **/
-       const regex_is_titulo_endpoint = /^.*\[\/+.*\]$/;
-       const regex_is_titulo_request = /^.*\[(POST|GET|PUT|DELETE|PATCH|OPTIONS|HEAD)\]$/;
-       
-      if (nivel === 2 && !titulo.match(regex_is_titulo_endpoint) && !titulo.match(regex_is_titulo_request)) {
+      if (
+        nivel === 2 &&
+        !titulo.match(blueprintConstants.REGEX_IS_TITULO_ENDPOINT) &&
+        !titulo.match(blueprintConstants.REGEX_IS_TITULO_REQUEST)
+      ) {
         i += proximaLinha ? 1 : 2
         const sessaoParagrafo: IConteudo[] = []
 
@@ -194,23 +214,25 @@ function extrairParagrafo(
           i < linhas.length &&
           linhas[i].trim() &&
           !linhas[i].startsWith('## ') &&
-          !linhas[i].startsWith(':::')
+          !linhas[i].match(blueprintConstants.REGEX_VERIFICA_NOTACAO_NOTE)
         ) {
           const resultado = extrairBloco(markdown, linhas, i, sessaoParagrafo)
           i = linhas[resultado]?.trim() ? resultado : resultado + 1
         }
 
-        componentes.push({ tipoConteudo: 'paragrafo', nivel, titulo, componentes: sessaoParagrafo } as IParagrafo)
-        return i;
-      }
-
-
-      /**
-       * Agrupa em um paragrafo um titulo com paragrafos simples descritos na linha seguinte. Ex.
-       * ## Sobre
-       * Lorem ispsum Lorem ispsum Lorem ispsum
-       **/
-      else if (proximaLinha && !proximaLinha.startsWith('#')) {
+        componentes.push({
+          tipoConteudo: 'paragrafo',
+          nivel,
+          titulo,
+          componentes: sessaoParagrafo
+        } as IParagrafo)
+        return i
+      } else if (proximaLinha && !proximaLinha.startsWith('#')) {
+        /**
+         * Agrupa em um paragrafo um titulo com paragrafos simples descritos na linha seguinte. Ex.
+         * ## Sobre
+         * Lorem ispsum Lorem ispsum Lorem ispsum
+         **/
         let texto = ''
         i++
 
@@ -218,7 +240,7 @@ function extrairParagrafo(
           i < linhas.length &&
           linhas[i].trim() &&
           !linhas[i].startsWith('#') &&
-          !linhas[i].startsWith(':::')
+          !linhas[i].match(blueprintConstants.REGEX_VERIFICA_NOTACAO_NOTE)
         ) {
           texto += ' ' + linhas[i].trim()
           i++
@@ -226,20 +248,22 @@ function extrairParagrafo(
 
         titulo = titulo.replace('<i class="fa fa-warning"></i>', '').trim()
         componentes.push({ tipoConteudo: 'paragrafo', nivel, titulo, texto } as IParagrafo)
-
       } else {
         componentes.push({ tipoConteudo: 'paragrafo', nivel, titulo } as IParagrafo)
       }
     }
-
   } else if (linhaAtual.includes('FORMAT:') || linhaAtual.includes('HOST:')) {
     const titulo = linhaAtual.substring(0, linhaAtual.indexOf(':')).trim()
     const texto = linhaAtual.substring(linhaAtual.indexOf(':') + 1).trim()
     componentes.push({ tipoConteudo: 'configuracao', nivel: 0, titulo, texto } as IParagrafo)
 
+    // Valida titulo de tabela.
   } else if (linhaAtual.includes('|') && linhas[i + 1].trim().includes('--:')) {
     i++
 
+    // Valida linha final de nota.
+  } else if (linhaAtual.trim().match(blueprintConstants.REGEX_VERIFICA_NOTACAO_NOTE_FECHAMENTO)) {
+    i++
   }
   // Agrupamento de Paragrafos simples de continuação.
   else if (linhaAtual && !linhaAtual.startsWith('#')) {
@@ -250,7 +274,6 @@ function extrairParagrafo(
       i++
     }
     componentes.push({ tipoConteudo: 'paragrafo', nivel: 0, texto } as IParagrafo)
-
   } else {
     componentes.push({ tipoConteudo: 'paragrafo', nivel: 0, texto: linhaAtual } as IParagrafo)
   }
@@ -283,10 +306,10 @@ function extrairRequest(
     ) {
       if (linhas[i].startsWith('+ Request')) {
         i = extrairDetalhesRequest(linhas, i, requestComponentes)
-
       } else if (linhas[i].startsWith('+ Response')) {
         i = extrairDetalhesRequest(linhas, i, requestComponentes)
-
+      } else if (linhas[i].startsWith('+ Parameters')) {
+        i = extrairParametros(linhas, i, componentes)
       } else {
         const result = extrairBloco(markdown, linhas, i, requestComponentes)
         i = result
@@ -303,6 +326,7 @@ function extrairRequest(
   } else {
     i++
   }
+
   return i
 }
 
@@ -320,13 +344,11 @@ function extrairDetalhesRequest(
   let status = 0
   let formato = ''
   const headers: string[] = []
-  const parametros: IParametros[] = []
 
   if (linhaAtual.startsWith('+ Request')) {
     tipo = 'request'
     const match = linhaAtual.match(/\[([A-Z]+)\]/)
     verbo = match ? match[1] : ''
-
   } else if (linhaAtual.startsWith('+ Response')) {
     tipo = 'response'
     const match = linhaAtual.match(/([0-9]{3})/)
@@ -338,18 +360,14 @@ function extrairDetalhesRequest(
   // Verifica se a prox linha contem info, se não pula para proxima
   i = linhas[i + 1].trim() ? i + 1 : i + 2
 
-  /** Os parametros são declarados dentro de cada requisição request ou response
+  /** Montagem do request
    * request >>
-   *   > parameters
    *   > headers
    *   > body
    * ***/
   while (i < linhas.length) {
     const linha = linhas[i].trim()
-    if (linha.startsWith('+ Parameters')) {
-      i = extrairParametros(linhas, i, parametros)
-      i++
-    } else if (linha.startsWith('+ Headers')) {
+    if (linha.startsWith('+ Headers')) {
       i = linhas[i + 1].trim() ? i + 1 : i + 2
       while (i < linhas.length && linhas[i].trim()) {
         const header = linhas[i].trim().replace(/^\s+/, '')
@@ -381,19 +399,16 @@ function extrairDetalhesRequest(
     status,
     formato,
     headers,
-    parametros,
+    // parametros,
     corpo: corpo.trim()
   } as IRequestResponse)
 
   return i
 }
 
-function extrairParametros(
-  linhas: string[],
-  indice: number,
-  componentes: IParametros[]
-): number {
+function extrairParametros(linhas: string[], indice: number, componentes: IConteudo[]): number {
   let i = linhas[indice + 1].trim() ? indice + 1 : indice + 2
+  const parametros: IParametroProps[] = []
 
   while (i < linhas.length && linhas[i].trim()) {
     let linha = linhas[i].trim()
@@ -402,9 +417,9 @@ function extrairParametros(
       if (linhas[i + 1].trim().startsWith('+ Default')) {
         const linhaDefault = linhas[i + 1].trim()
         linha += ' ' + linhaDefault
-        componentes.push(criarParametros(linha))
+        parametros.push(criarParametros(linha))
       } else {
-        componentes.push(criarParametros(linha))
+        parametros.push(criarParametros(linha))
       }
 
       i++
@@ -413,15 +428,13 @@ function extrairParametros(
     }
   }
 
+  componentes.push({ parametros } as IParametros)
   return i
 }
 
-function criarParametros(parametros: string): IParametros {
-  const parametrosExtraidos: IParametros = {}
-
-  const match = parametros.match(
-    /^\+\s*(\w+):\s*`(.+?)`\s*(?:\(([^)]+)\))?\s*-\s*(.*?)(?:\s*\+\s*Default:\s*`?([^`]+)`?)?$/
-  )
+function criarParametros(parametros: string): IParametroProps {
+  const parametrosExtraidos: IParametroProps = {}
+  const match = parametros.match(blueprintConstants.REGEX_IS_PARAMETRO)
 
   if (match) {
     const nome = match[1]
@@ -440,7 +453,7 @@ function criarParametros(parametros: string): IParametros {
       }
     }
 
-    const parametroProps: IParametroProps = {
+    const parametroProps: IParametroSubProps = {
       nome,
       exemplo,
       descricao,
@@ -496,11 +509,7 @@ function extrairLista(linhas: string[], indice: number, componentes: IConteudo[]
   return i
 }
 
-function extrairTabela(
-  linhas: string[],
-  indice: number,
-  componentes: IConteudo[]
-): number {
+function extrairTabela(linhas: string[], indice: number, componentes: IConteudo[]): number {
   let i = indice
   const linhaAtual = linhas[i].trim()
   const linhaAnterior = linhas[i - 1].trim()
@@ -510,22 +519,42 @@ function extrairTabela(
       linha atual: A | B ou --: | --  <-> linha anterior a A | B;
   */
   const isCabecalhoNaLinhaAnterior = linhaAtual.match(/^\s*:?-{1,}:?\s*(\|\s*:?-*:?\s*)+$/)
-  const cabecalho = isCabecalhoNaLinhaAnterior ? linhaAnterior : linhaAtual
+  let cabecalho = isCabecalhoNaLinhaAnterior ? linhaAnterior : linhaAtual
+
+  // Verifica se a tabela está no formato incorreto, | A | B | C.
+  // Formato correto A | B | C, sem o palpe inicial.
+  if (cabecalho.match(/^\s*\|\s*[A-Za-z].*$/))
+    cabecalho = cabecalho.substring(cabecalho.indexOf('|') + 1)
 
   //Separa as colunas
-  const colunas = cabecalho.split('|').map((coluna) => coluna.trim().toLowerCase())
+  const colunas = cabecalho.split('|').map((coluna) => lodash.deburr(coluna.trim().toLowerCase()))
   const linhasTabela: { [key: string]: string }[] = []
 
   i += isCabecalhoNaLinhaAnterior ? 1 : 2
 
   while (i < linhas.length && linhas[i].includes('|')) {
-    const valores = linhas[i].split('|').map((valor) => valor.trim())
+    // Linha com os valores.
+    let valoresSrt = linhas[i]
+
+    // Verifica se a tabela está no formato incorreto, | A | B | C.
+    // Formato correto A | B | C, sem o palpe inicial.
+    if (valoresSrt.match(/^\s*\|\s*[A-Za-z].*$/))
+      valoresSrt = valoresSrt.substring(valoresSrt.indexOf('|') + 1)
+
+    const valores = valoresSrt.split('|').map((valor) => valor.trim())
+
+    if(colunas.length < valores.length && !valores[0]){
+      valores.splice(0, 1)
+    }
+
     const linhaObj: { [key: string]: string } = {}
+    
     colunas
       .filter((valor) => valor.trim())
       .forEach((coluna, idx) => {
         linhaObj[coluna] = valores[idx]
       })
+
     linhasTabela.push(linhaObj)
     i++
   }

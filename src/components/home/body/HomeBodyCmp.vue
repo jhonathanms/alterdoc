@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { storageConstants } from '@/service/constants/storageConstants'
+import { storageConstants } from '@/constants/storageConstants'
 import type { IRecentes } from '@/model/IProjeto'
 import storageService from '@/service/storageService'
 import { useStoreBase } from '@/stores/storeBase'

@@ -9,7 +9,7 @@ $height_default: calc(100vh - 65px);
 
 .splitter_card_itens {
   height: calc(100vh - 150px);
-  @include styleclass('flex flex-column align-items-center gap-3 w-full h-full p-3 overflow-y-auto');
+  @include styleclass('flex flex-column align-items-center gap-3 w-full p-3 overflow-y-auto');
 }
 
 iframe {
