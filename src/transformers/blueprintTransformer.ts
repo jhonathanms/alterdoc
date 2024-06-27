@@ -3,6 +3,7 @@ import type {
   ICitacao,
   ICodigo,
   IConteudo,
+  IEndpoint,
   IGrupo,
   ILista,
   INota,
@@ -15,7 +16,7 @@ import type {
   TipoConteudo
 } from '@/model/IBlueprint'
 
-import lodash from 'lodash';
+import lodash from 'lodash'
 
 const toObj = (input: string): IConteudo[] => {
   const conteudo = extrairComponentes(input)
@@ -128,46 +129,84 @@ function extrairGrupo(
   const titulo = matchTitulo ? matchTitulo[1] : ''
 
   // Extrair a descrição do grupo
-  let descricao = ''
+  // let descricao = ''
   indicePrincipal++
-  let proximaLinha = linhas[indicePrincipal]?.trim()
+  let conteudoDaProxLinha = linhas[indicePrincipal]?.trim()
 
-  if (proximaLinha && !proximaLinha.startsWith('#')) {
-    descricao = proximaLinha
-    indicePrincipal++
-    while (
-      indicePrincipal < linhas.length &&
-      linhas[indicePrincipal].trim() &&
-      !linhas[indicePrincipal].startsWith('#')
-    ) {
-      descricao += ' ' + linhas[indicePrincipal].trim()
-      indicePrincipal++
-    }
-  }
+  // if (proximaLinha && !proximaLinha.startsWith('#')) {
+  //   descricao = proximaLinha
+  //   indicePrincipal++
+
+  //   while (
+  //     indicePrincipal < linhas.length &&
+  //     linhas[indicePrincipal].trim() &&
+  //     !linhas[indicePrincipal].startsWith('#')
+  //   ) {
+  //     descricao += ' ' + linhas[indicePrincipal].trim()
+  //     indicePrincipal++
+  //   }
+  // }
 
   const grupoComponentes: IConteudo[] = []
 
-  // Iterar sobre os blocos dentro do grupo
-  while (indicePrincipal < linhas.length && !linhas[indicePrincipal].startsWith('###')) {
-    const result = extrairBloco(markdown, linhas, indicePrincipal, grupoComponentes)
-    indicePrincipal = result
-    proximaLinha = linhas[result]?.trim()
-  }
+  // extrair o endpoint
 
-  // Faz a extração dos requests [GET, POST] aninhados com os detalhes.
-  while (indicePrincipal < linhas.length && linhas[indicePrincipal].startsWith('###')) {
-    const result = extrairRequest(markdown, linhas, indicePrincipal, grupoComponentes)
+  // Iterar sobre os blocos dentro do grupo
+  while (indicePrincipal < linhas.length && !linhas[indicePrincipal].trim().startsWith('# Group')) {
+    const result = extrairEndpoint(markdown, linhas, indicePrincipal, grupoComponentes)
     indicePrincipal = result
-    proximaLinha = linhas[result]?.trim()
+    conteudoDaProxLinha = linhas[result]?.trim()
   }
 
   // Adicionar o grupo com seus componentes ao array principal
   componentes.push({
     tipoConteudo: 'grupo',
     titulo,
-    descricao,
-    componentes: grupoComponentes as IConteudo[]
+    endpoints: grupoComponentes as IEndpoint[]
   } as IGrupo)
+
+  return indicePrincipal
+}
+
+function extrairEndpoint(
+  markdown: string,
+  linhas: string[],
+  indice: number,
+  componentes: IConteudo[]
+): number {
+  let indicePrincipal = indice
+  const conteudoLinhaAtual = linhas[indicePrincipal].trim()
+  let conteudoDaProxLinha = linhas[indicePrincipal]?.trim()
+  const match = conteudoLinhaAtual.match(blueprintConstants.REGEX_IS_TITULO_ENDPOINT_COMPLETO)
+
+  const nome = match?.[1] || ''
+  const path = match?.[2] || ''
+
+  indicePrincipal += linhas[indicePrincipal + 1] ? 1 : 2
+
+  const endpointComponentes: IConteudo[] = []
+
+  while (indicePrincipal < linhas.length && !linhas[indicePrincipal].startsWith('##') && !linhas[indicePrincipal].startsWith('# Group')) {
+    while (indicePrincipal < linhas.length && !linhas[indicePrincipal].startsWith('###')) {
+      const result = extrairBloco(markdown, linhas, indicePrincipal, endpointComponentes)
+      indicePrincipal = result
+      conteudoDaProxLinha = linhas[result]?.trim()
+    }
+
+    // Faz a extração dos requests [GET, POST] aninhados com os detalhes.
+    while (indicePrincipal < linhas.length && linhas[indicePrincipal].startsWith('###')) {
+      const result = extrairRequest(markdown, linhas, indicePrincipal, endpointComponentes)
+      indicePrincipal = result
+      conteudoDaProxLinha = linhas[result]?.trim()
+    }
+  }
+
+  componentes.push({
+    tipoConteudo: 'endpoint',
+    nome,
+    path,
+    componentes: endpointComponentes
+  } as IEndpoint)
 
   return indicePrincipal
 }
@@ -543,12 +582,17 @@ function extrairTabela(linhas: string[], indice: number, componentes: IConteudo[
 
     const valores = valoresSrt.split('|').map((valor) => valor.trim())
 
-    if(colunas.length < valores.length && !valores[0]){
+    // Remove o valor vazio gerado pelo palpe inicial informado incorretamente.
+    // e alinha os valores em conformidade com as colunas.
+    // col1 | col2
+    //      | val1  | val2
+    //Resultado:  col1=val1, col2=val2
+    if (colunas.length < valores.length && !valores[0]) {
       valores.splice(0, 1)
     }
 
     const linhaObj: { [key: string]: string } = {}
-    
+
     colunas
       .filter((valor) => valor.trim())
       .forEach((coluna, idx) => {

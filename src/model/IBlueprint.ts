@@ -17,6 +17,7 @@ export type TipoConteudo =
   | 'tabela'
   | 'lista'
   | 'parametro'
+  | 'endpoint'
 
 export interface IConteudo {
   tipoConteudo: TipoConteudo
@@ -53,6 +54,12 @@ export interface ITabela extends IConteudo {
 
 export interface IGrupo extends IConteudo {
   titulo: string
+  endpoints: IEndpoint[]
+}
+
+export interface IEndpoint extends IConteudo {
+  nome: string
+  path: string
 }
 
 export interface IRequestResponse extends IConteudo {
@@ -64,12 +71,12 @@ export interface IRequestResponse extends IConteudo {
   corpo?: string
 }
 
-export interface IParametros extends IConteudo{
+export interface IParametros extends IConteudo {
   parametros: IParametroProps[]
 }
 
-export interface IParametroProps{
-    [key: string]: IParametroSubProps
+export interface IParametroProps {
+  [key: string]: IParametroSubProps
 }
 
 export interface IParametroSubProps {
