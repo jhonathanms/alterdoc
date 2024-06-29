@@ -8,10 +8,10 @@
       },
       subtitle: {
         class: 'flex p-0 white-space-nowrap overflow-hidden text-overflow-ellipsis',
-        style: 'max-width: 200px; min-width: 50px;',
+        style: 'max-width: 200px; min-width: 50px;'
       },
       body: {
-        class: 'p-3 h-full'
+        class: 'pl-3 pr-2 py-2'
       },
       content: {
         class: 'hidden p-0'
@@ -30,30 +30,33 @@
         <Tag
           :value="data.tipo"
           rounded
-          class="w-3"
+          class="w-5 max-w-5rem"
           style="height: 20px; color: var(--surface-500); background-color: var(--bg-default)"
         />
-        <div class="flex gap-2 justify-content-center">
+        <div class="flex justify-content-center">
           <Button
             rounded
-            outlined
+            text
             severity="secondary"
             icon="pi pi-pen-to-square"
-            pt:root:class="h-2rem w-2rem"
+            pt:root:style="height: 30px; width: 30px"
+            pt:icon:style="fontSize: 12px"
           />
           <Button
+            text
+            rounded
             icon="pi pi-clone"
-            rounded
-            outlined
             severity="secondary"
-            pt:root:class="h-2rem w-2rem "
+            pt:root:style="height: 30px; width: 30px"
+            pt:icon:style="fontSize: 12px"
           />
           <Button
+          text
             rounded
-            outlined
             icon="pi pi-times"
             severity="secondary"
-            pt:root:class="h-2rem w-2rem"
+            pt:root:style="height: 30px; width: 30px"
+            pt:icon:style="fontSize: 12px"
           />
         </div>
       </div>
@@ -62,9 +65,9 @@
 </template>
 
 <script setup lang="ts">
-import type { ICard } from '@/components/editor/body/interfaces/ICard';
-import { computed } from 'vue';
-import { CardItemTagColor } from './CardItemTagColor';
+import type { ICard } from '@/components/editor/body/interfaces/ICard'
+import { computed } from 'vue'
+import { CardItemTagColor } from './CardItemTagColor'
 
 const data = withDefaults(defineProps<ICard>(), { tipo: 'default' })
 const getBorderColor = computed(() => CardItemTagColor[data.tipo])
@@ -74,10 +77,10 @@ const getBorderColor = computed(() => CardItemTagColor[data.tipo])
 @import 'primeflex/primeflex.scss';
 
 .card_item {
-  @include styleclass('text-sm w-full h-7rem border-left-solid border-left-3');
+  @include styleclass('text-sm w-full h-full border-left-solid border-left-3');
 }
 
 .card_footer {
-  @include styleclass('card flex gap-2 h-2rem justify-content-between align-items-cente');
+  @include styleclass('card flex gap-2 h-full justify-content-between align-items-center');
 }
 </style>

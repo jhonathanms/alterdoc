@@ -524,11 +524,11 @@ function extrairCitacao(linhas: string[], indice: number, componentes: IConteudo
 
 function extrairCodigo(linhas: string[], indice: number, componentes: IConteudo[]): number {
   let i = indice
-  const linguagem = linhas[i].slice(3).trim()
+  const linguagem = linhas[i].trim().slice(3).trim()
   let codigo = ''
   i++
-  while (i < linhas.length && !linhas[i].startsWith('```')) {
-    codigo += linhas[i] + '\n'
+  while (i < linhas.length && !linhas[i].trim().startsWith('```')) {
+    codigo += linhas[i].trim() + '\n'
     i++
   }
   i++ // Pula o fechamento ```

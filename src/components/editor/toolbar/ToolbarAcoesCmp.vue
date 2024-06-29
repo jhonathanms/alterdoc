@@ -69,7 +69,8 @@ const cancelar = () => {
 }
 
 const handleKeydown = (event: KeyboardEvent) => {
-  if (event.ctrlKey && event.key === 's') {
+  
+  if (event.ctrlKey && (event.key === 's' || event.key === 'S')) {
     event.preventDefault()
     handleSalvar()
   }

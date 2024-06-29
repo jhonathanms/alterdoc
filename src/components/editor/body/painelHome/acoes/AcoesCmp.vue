@@ -9,7 +9,7 @@
       v-show="showBtnAdd"
       label="Adicionar"
       severity="primary"
-      badge="CTRL + N"
+      badge="CTRL + ENTER"
       :pt="{
         badge: {
           class: 'absolute top-0 right-0',
