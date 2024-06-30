@@ -20,7 +20,7 @@
     </SplitterPanel>
 
     <SplitterPanel class="flex justify-content-center" :size="75" :minSize="50">
-      <DialogCmp/>
+      <DialogCmp />
       <PreviewHtmlCmp v-if="store.togglePreview === 'Html'" />
       <PreviewCodigoCmp v-else />
     </SplitterPanel>
