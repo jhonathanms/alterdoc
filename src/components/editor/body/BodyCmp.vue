@@ -3,8 +3,8 @@
     <SplitterPanel class="flex w-full h-full relative" :size="25" :minSize="30">
       <div class="splitter_card_itens">
         <template v-for="(item, index) in store.projeto.conteudo" :key="index">
-     
           <CardItemCmp
+            :id="item.id"
             :titulo="getDados(item).titulo"
             :subtitulo="getDados(item).subTitulo"
             :tipo="item.tipoConteudo"
@@ -20,19 +20,22 @@
     </SplitterPanel>
 
     <SplitterPanel class="flex justify-content-center" :size="75" :minSize="50">
+      <DialogCmp/>
       <PreviewHtmlCmp v-if="store.togglePreview === 'Html'" />
       <PreviewCodigoCmp v-else />
     </SplitterPanel>
+    
   </Splitter>
 </template>
 
 <script setup lang="ts">
-import type { IConteudo, IParagrafo } from '@/model/IBlueprint'
-import { useStoreBase } from '@/stores/storeBase'
-import AcoesCmp from './painelHome/acoes/AcoesCmp.vue'
-import CardItemCmp from './painelHome/card/CardItemCmp.vue'
-import PreviewCodigoCmp from './painelPreview/PreviewCodigoCmp.vue'
-import PreviewHtmlCmp from './painelPreview/PreviewHtmlCmp.vue'
+import type { IConteudo, IParagrafo } from '@/model/IBlueprint';
+import { useStoreBase } from '@/stores/storeBase';
+import AcoesCmp from './painelHome/acoes/AcoesCmp.vue';
+import CardItemCmp from './painelHome/card/CardItemCmp.vue';
+import DialogCmp from './painelHome/dialog/DialogCmp.vue';
+import PreviewCodigoCmp from './painelPreview/PreviewCodigoCmp.vue';
+import PreviewHtmlCmp from './painelPreview/PreviewHtmlCmp.vue';
 
 const store = useStoreBase()
 

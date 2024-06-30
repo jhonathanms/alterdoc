@@ -20,6 +20,7 @@ export type TipoConteudo =
   | 'endpoint'
 
 export interface IConteudo {
+  id: string
   tipoConteudo: TipoConteudo
   componentes?: IConteudo[]
 }

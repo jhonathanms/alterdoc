@@ -41,6 +41,7 @@
             icon="pi pi-pen-to-square"
             pt:root:style="height: 30px; width: 30px"
             pt:icon:style="fontSize: 12px"
+            @click="abrirModalEdicao"
           />
           <Button
             text
@@ -68,9 +69,17 @@
 import type { ICard } from '@/components/editor/body/interfaces/ICard'
 import { computed } from 'vue'
 import { CardItemTagColor } from './CardItemTagColor'
+import { useStoreBase } from '@/stores/storeBase';
+
 
 const data = withDefaults(defineProps<ICard>(), { tipo: 'default' })
 const getBorderColor = computed(() => CardItemTagColor[data.tipo])
+
+const store = useStoreBase()
+
+const abrirModalEdicao = () => {
+  store.setAbrirmodalCadastro(true, data.id)
+}
 </script>
 
 <style scoped lang="scss">

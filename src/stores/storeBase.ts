@@ -14,13 +14,14 @@ export const useStoreBase = defineStore('storeBase', () => {
     formato: '1A',
     nomeArquivo: 'doc.apib'
   })
+  const abrirModalCadastro = ref(false)
 
   const setTogglePreview = () => {
     togglePreview.value = togglePreview.value === 'Html' ? 'Codigo' : 'Html'
   }
 
-  const setTogglePanelHome = (valor?: boolean) => {
-    togglePanelHome.value = valor !== undefined ? valor : !togglePanelHome.value
+  const setTogglePanelHome = (value?: boolean) => {
+    togglePanelHome.value = value !== undefined ? value : !togglePanelHome.value
   }
 
   const setMarkdown = (value: string) => {
@@ -51,6 +52,12 @@ export const useStoreBase = defineStore('storeBase', () => {
     }
   }
 
+  const setAbrirmodalCadastro = (abrir: boolean, id?: string) => {
+    abrirModalCadastro.value = abrir
+
+    // Chamada assincrona buscando o elemento por id.
+  }
+
   return {
     togglePreview,
     markdown,
@@ -58,11 +65,13 @@ export const useStoreBase = defineStore('storeBase', () => {
     togglePanelHome,
     recentes,
     projeto,
+    abrirModalCadastro,
     setTogglePreview,
     setMarkdown,
     setConteudoObj,
     setTogglePanelHome,
     setRecentes,
     setProjeto,
+    setAbrirmodalCadastro
   }
 })

@@ -106,7 +106,7 @@ function extrairNota(
 
   const tipoConteudo: TipoConteudo = tipoNota === 'warning' ? 'alerta' : 'notacao'
 
-  componentes.push({ tipoConteudo, titulo, componentes: notaComponentes } as INota)
+ componentes.push({ id: lodash.uniqueId(),  tipoConteudo, titulo, componentes: notaComponentes } as INota)
 
   if (!linhas[proximaLinha]?.startsWith('# Group') && !linhas[proximaLinha]) {
     proximaLinha++
@@ -160,6 +160,7 @@ function extrairGrupo(
 
   // Adicionar o grupo com seus componentes ao array principal
   componentes.push({
+    id: lodash.uniqueId(),
     tipoConteudo: 'grupo',
     titulo,
     endpoints: grupoComponentes as IEndpoint[]
@@ -202,6 +203,7 @@ function extrairEndpoint(
   }
 
   componentes.push({
+    id: lodash.uniqueId(),
     tipoConteudo: 'endpoint',
     nome,
     path,
@@ -226,7 +228,7 @@ function extrairParagrafo(
     let titulo = match[2].trim()
 
     if (nivel === 1) {
-      componentes.push({ tipoConteudo: 'configuracao', nivel, texto: titulo } as IParagrafo)
+     componentes.push({ id: lodash.uniqueId(),  tipoConteudo: 'configuracao', nivel, texto: titulo } as IParagrafo)
     } else {
       const proximaLinha = linhas[i + 1]?.trim()
 
@@ -260,6 +262,7 @@ function extrairParagrafo(
         }
 
         componentes.push({
+          id: lodash.uniqueId(),
           tipoConteudo: 'paragrafo',
           nivel,
           titulo,
@@ -286,15 +289,15 @@ function extrairParagrafo(
         }
 
         titulo = titulo.replace('<i class="fa fa-warning"></i>', '').trim()
-        componentes.push({ tipoConteudo: 'paragrafo', nivel, titulo, texto } as IParagrafo)
+       componentes.push({ id: lodash.uniqueId(),  tipoConteudo: 'paragrafo', nivel, titulo, texto } as IParagrafo)
       } else {
-        componentes.push({ tipoConteudo: 'paragrafo', nivel, titulo } as IParagrafo)
+       componentes.push({ id: lodash.uniqueId(),  tipoConteudo: 'paragrafo', nivel, titulo } as IParagrafo)
       }
     }
   } else if (linhaAtual.includes('FORMAT:') || linhaAtual.includes('HOST:')) {
     const titulo = linhaAtual.substring(0, linhaAtual.indexOf(':')).trim()
     const texto = linhaAtual.substring(linhaAtual.indexOf(':') + 1).trim()
-    componentes.push({ tipoConteudo: 'configuracao', nivel: 0, titulo, texto } as IParagrafo)
+   componentes.push({ id: lodash.uniqueId(),  tipoConteudo: 'configuracao', nivel: 0, titulo, texto } as IParagrafo)
 
     // Valida titulo de tabela.
   } else if (linhaAtual.includes('|') && linhas[i + 1].trim().includes('--:')) {
@@ -312,9 +315,9 @@ function extrairParagrafo(
       texto += ' ' + linhas[i].trim()
       i++
     }
-    componentes.push({ tipoConteudo: 'paragrafo', nivel: 0, texto } as IParagrafo)
+   componentes.push({ id: lodash.uniqueId(),  tipoConteudo: 'paragrafo', nivel: 0, texto } as IParagrafo)
   } else {
-    componentes.push({ tipoConteudo: 'paragrafo', nivel: 0, texto: linhaAtual } as IParagrafo)
+   componentes.push({ id: lodash.uniqueId(),  tipoConteudo: 'paragrafo', nivel: 0, texto: linhaAtual } as IParagrafo)
   }
 
   i++
@@ -356,6 +359,7 @@ function extrairRequest(
     }
 
     componentes.push({
+      id: lodash.uniqueId(),
       tipoConteudo: 'requisicao',
       nivel: 3,
       texto: texto,
@@ -432,6 +436,7 @@ function extrairDetalhesRequest(
   }
 
   componentes.push({
+    id: lodash.uniqueId(),
     tipoConteudo: 'detalhes_requisicao',
     tipo,
     verbo,
@@ -467,7 +472,7 @@ function extrairParametros(linhas: string[], indice: number, componentes: IConte
     }
   }
 
-  componentes.push({ parametros } as IParametros)
+ componentes.push({ id: lodash.uniqueId(),  parametros } as IParametros)
   return i
 }
 
@@ -518,7 +523,7 @@ function extrairCitacao(linhas: string[], indice: number, componentes: IConteudo
     texto += '\n' + linhas[i].slice(1).trim()
     i++
   }
-  componentes.push({ tipoConteudo: 'citacao', texto } as ICitacao)
+ componentes.push({ id: lodash.uniqueId(),  tipoConteudo: 'citacao', texto } as ICitacao)
   return i
 }
 
@@ -532,7 +537,7 @@ function extrairCodigo(linhas: string[], indice: number, componentes: IConteudo[
     i++
   }
   i++ // Pula o fechamento ```
-  componentes.push({ tipoConteudo: 'codigo', linguagem, codigo: codigo.trim() } as ICodigo)
+ componentes.push({ id: lodash.uniqueId(),  tipoConteudo: 'codigo', linguagem, codigo: codigo.trim() } as ICodigo)
   return i
 }
 
@@ -544,7 +549,7 @@ function extrairLista(linhas: string[], indice: number, componentes: IConteudo[]
     itens.push(linhas[i].replace(/^[0-9]+\.\s*|\*\s*/, '').trim())
     i++
   }
-  componentes.push({ tipoConteudo: 'lista', estilo, itens } as ILista)
+ componentes.push({ id: lodash.uniqueId(),  tipoConteudo: 'lista', estilo, itens } as ILista)
   return i
 }
 
@@ -602,7 +607,7 @@ function extrairTabela(linhas: string[], indice: number, componentes: IConteudo[
     linhasTabela.push(linhaObj)
     i++
   }
-  componentes.push({ tipoConteudo: 'tabela', linhas: linhasTabela } as ITabela)
+ componentes.push({ id: lodash.uniqueId(),  tipoConteudo: 'tabela', linhas: linhasTabela } as ITabela)
   return i
 }
 
