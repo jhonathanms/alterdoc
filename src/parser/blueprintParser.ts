@@ -20,7 +20,7 @@ import lodash from 'lodash'
 
 const toObj = (input: string): IConteudo[] => {
   const conteudo = extrairComponentes(input)
-  console.log('json', JSON.stringify(conteudo, null, 2))
+  // console.log('json', JSON.stringify(conteudo, null, 2))
   return conteudo
 }
 
@@ -611,6 +611,6 @@ function extrairTabela(linhas: string[], indice: number, componentes: IConteudo[
   return i
 }
 
-export const blueprintTransformer = {
+export const blueprintParser = {
   toObj
 }

@@ -1,4 +1,4 @@
-import type { IConteudo } from "./IBlueprint"
+import type { IConteudo, TipoConteudo } from './IBlueprint'
 
 export interface IProjeto {
   id?: string
@@ -17,3 +17,10 @@ export interface IRecentes {
   ultimoAcesso?: string
 }
 
+export interface IModalBase {
+  cabecalho: string
+  tipo: TipoConteudo | 'default'
+  conteudo: any
+  abrir: boolean
+  isEdicao: boolean
+}

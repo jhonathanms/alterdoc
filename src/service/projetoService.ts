@@ -1,6 +1,6 @@
 import type { IConteudo, IParagrafo } from "@/model/IBlueprint"
 import type { IProjeto } from "@/model/IProjeto"
-import { blueprintTransformer } from "@/transformers/blueprintTransformer"
+import { blueprintParser } from "@/parser/blueprintParser"
 import { storageConstants } from "../constants/storageConstants"
 import storageService from '@/service/storageService'
 import { v4 as uuidv4 } from 'uuid'
@@ -11,7 +11,7 @@ const criar = (markdown: string, file?: File): IProjeto => {
     nomeArquivo: file?.name || ''
   }
 
-  const conteudo = blueprintTransformer.toObj(markdown)
+  const conteudo = blueprintParser.toObj(markdown)
   atualizarConfiguracao(conteudo, projeto)
   projeto.conteudo = conteudo
 

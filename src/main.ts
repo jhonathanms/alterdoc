@@ -10,6 +10,7 @@ import 'primevue/resources/themes/lara-light-blue/theme.css'
 import 'primeflex/primeflex.css'
 import 'primeicons/primeicons.css'
 import 'prismjs/themes/prism-tomorrow.css'
+import Tooltip from 'primevue/tooltip';
 import ConfirmationService from 'primevue/confirmationservice';
 
 
@@ -18,5 +19,5 @@ app.use(createPinia())
 app.use(router)
 app.use(PrimeVue)
 app.use(ConfirmationService);
-
+app.directive('tooltip', Tooltip);
 app.mount('#app')
