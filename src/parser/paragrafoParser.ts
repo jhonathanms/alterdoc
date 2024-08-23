@@ -119,15 +119,6 @@ const parseHtmlToParagrafos = (paragrafoPrincipal: IParagrafo, nodes: NodeList) 
   }
 }
 
-const toConteudo = (conteudo: IConteudo, paragrafo: IParagrafo) => {
-  (conteudo as IParagrafo).titulo = paragrafo.titulo;
-  (conteudo as IParagrafo).texto = paragrafo.texto;
-
-  if (conteudo.componentes) {
-    conteudo.componentes?.splice(0, conteudo.componentes.length, ...conteudo.componentes)
-  }
-}
-
 const toHtml = (paragrafo: IParagrafo) => {
   let html = ''
 
@@ -155,6 +146,5 @@ const fromHtml = (paragrafoPrincipal: IParagrafo, html: string) => {
 
 export const paragrafoParser = {
   toHtml,
-  fromHtml,
-  toConteudo
+  fromHtml
 }

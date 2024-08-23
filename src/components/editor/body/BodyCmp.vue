@@ -135,7 +135,6 @@ const cancelarModal = () => setModal({ ...modal, abrir: false })
 
 const gravarModal = () => { 
   setModal({ ...modal, abrir: false })
-  store.setConteudoPorId(modal.conteudo)
 }
 
 </script>

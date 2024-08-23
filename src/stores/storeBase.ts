@@ -58,17 +58,6 @@ export const useStoreBase = defineStore('storeBase', () => {
     }
   }
 
-  const setConteudoPorId = (novoConteudo: IConteudo) => {
-    conteudoObj
-      .filter((conteudoAtual) => conteudoAtual.id === novoConteudo.id)
-      .forEach((conteudoAtual) => {
-        switch (conteudoAtual.tipoConteudo) {
-          case 'paragrafo': paragrafoParser.toConteudo(conteudoAtual, novoConteudo as IParagrafo); break;
-          case 'tabela': break;
-        }
-      })
-  }
-
   return {
     togglePreview,
     markdown,
@@ -81,7 +70,6 @@ export const useStoreBase = defineStore('storeBase', () => {
     setMarkdown,
     setConteudoBlueprint,
     setConteudoObj,
-    setConteudoPorId,
     setTogglePanelHome,
     setRecentes,
     setProjeto,
