@@ -53,10 +53,13 @@ watch(conteudoHtml, () => {
   debounceSetParagrafo()
 })
 
-watch(() => props.paragrafo, (valor) => {
+watch(
+  () => props.paragrafo,
+  (valor) => {
     const paragrafo = paragrafoParser.toHtml(valor)
     setConteudoHtml(paragrafo)
-});
+  }
+)
 
 onMounted(() => {
   if (props.paragrafo) {

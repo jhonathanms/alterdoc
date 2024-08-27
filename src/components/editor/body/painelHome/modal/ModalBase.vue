@@ -7,6 +7,7 @@
     :header="store.modal.cabecalho"
     :style="{ minWidth: '50rem' }"
     :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
+    :pt:header:style="{ background: `var(--surface-100` }"
     @update:visible="handleFechar"
     @maximize="handleMaximize"
     @unmaximize="handleUnMaximize"

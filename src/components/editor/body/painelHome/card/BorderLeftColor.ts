@@ -1,4 +1,4 @@
-export const CardItemTagColor: Record<string, string> = {
+export const BorderLeftColor: Record<string, string> = {
   notacao: '--cyan-400',
   paragrafo: '--green-500',
   codigo: '--yellow-500',

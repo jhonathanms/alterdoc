@@ -17,10 +17,12 @@ const parseFormatacaoBlueprintParaHtml = (texto: string): string => {
     const TAG_STRONG = '<strong>$1</strong>'
     const TAG_EM = '<em>$1</em>'
     const TAG_A = '<a href="$2">$1</a>'
+    const TAG_CODE = '<code>$1</code>'
 
     texto = texto.replace(appConstants.REGEX_IS_STRONG_BLUEPRINT, TAG_STRONG)
     texto = texto.replace(appConstants.REGEX_IS_ITALIC_BLUEPRINT, TAG_EM)
     texto = texto.replace(appConstants.REGEX_IS_LINK_BLUEPRINT, TAG_A)
+    texto = texto.replace(appConstants.REGEX_IS_CODE_BLUEPRINT, TAG_CODE)
   }
 
   return texto
@@ -46,6 +48,9 @@ const parseNodeHtmlParaTexto = (node: Node): string => {
         break
       case 'br':
         textoFormatado = '<br>'
+        break
+      case 'code':
+        textoFormatado = `<code>${Array.from(elemento.childNodes).map(parseNodeHtmlParaTexto).join('')}</code>`
         break
       default:
         textoFormatado = Array.from(elemento.childNodes).map(parseNodeHtmlParaTexto).join('')

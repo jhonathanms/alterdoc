@@ -15,10 +15,9 @@
             width: !store.modal.maximize ? '1000px' : '100%'
           }"
         >
-          <template v-for="(item) in store.notacaoItens" :key="item?.conteudo?.id">
+          <template v-for="item in store.notacaoItens" :key="item?.conteudo?.id">
             <CardItemNotacaoCmp
               :conteudo="item"
-              @editar="handleEditar"
               @duplicar="handleDuplicar"
               @remover="handleRemover"
             />
@@ -30,10 +29,10 @@
 </template>
 
 <script setup lang="ts">
-import type { INota, IParagrafo } from '@/model/IBlueprint';
-import { useStoreBase } from '@/stores/storeBase';
-import { appUtils } from '@/utils/appUtils';
-import { computed, reactive } from 'vue';
+import type { INota, IParagrafo, ITabela } from '@/model/IBlueprint'
+import { useStoreBase } from '@/stores/storeBase'
+import { appUtils } from '@/utils/appUtils'
+import { computed, reactive } from 'vue'
 
 interface IProps {
   notacao: INota
@@ -56,8 +55,13 @@ const menuItems = reactive<IPropsMenuItem[]>([
       handleAddParagrafo()
     }
   },
-  { label: 'Tabela', icon: 'pi pi-table' },
-  { label: 'Código', icon: 'pi pi-code' }
+  {
+    label: 'Tabela',
+    icon: 'pi pi-table',
+    command: () => {
+      handleAddTabela()
+    }
+  }
 ])
 
 const titulo = computed(() => {
@@ -74,8 +78,8 @@ const handleTitulo = (e: Event) => {
   store.setModal({ ...store.modal, cabecalho: valor })
 }
 
-const handleEditar = () => {}
 const handleDuplicar = () => {}
+
 const handleRemover = (id: string) => {
   const indice = store.notacaoItens.findIndex((nota) => nota.id === id)
   store.notacaoItens.splice(indice, 1)
@@ -87,5 +91,12 @@ const handleAddParagrafo = () => {
     tipoConteudo: 'paragrafo',
     texto: ''
   } as IParagrafo)
+}
+
+const handleAddTabela = () => {
+  store.notacaoItens.push({
+    id: appUtils.gerarId(),
+    tipoConteudo: 'tabela'
+  } as ITabela)
 }
 </script>

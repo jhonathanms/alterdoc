@@ -45,7 +45,7 @@
 <script setup lang="ts">
 import type { ICard } from '@/components/editor/body/interfaces/ICard'
 import { computed } from 'vue'
-import { CardItemTagColor } from './CardItemTagColor'
+import { BorderLeftColor } from './BorderLeftColor'
 
 interface IEmit {
   (nome: 'editar'): void
@@ -54,7 +54,7 @@ interface IEmit {
 const props = withDefaults(defineProps<ICard>(), { tipo: 'default' })
 const emit = defineEmits<IEmit>()
 
-const borderColor = computed(() => CardItemTagColor[props.tipo])
+const borderColor = computed(() => BorderLeftColor[props.tipo])
 
 const handleEditar = () => emit('editar')
 

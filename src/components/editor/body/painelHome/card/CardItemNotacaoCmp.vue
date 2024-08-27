@@ -10,11 +10,18 @@
       <span class="pi pi-bars" style="cursor: grab"></span>
     </div>
 
-    <div class="col-9 align-items-center">
-      <NotacaoParagrafoCmp :paragrafo="props.conteudo as IParagrafo" />
+    <div class="col-10 align-items-center">
+      <NotacaoParagrafoCmp
+        v-if="props.conteudo?.tipoConteudo === 'paragrafo'"
+        :paragrafo="props.conteudo as IParagrafo"
+      />
+      <NotacaoTabelaCmp
+        v-if="props.conteudo?.tipoConteudo === 'tabela'"
+        :tabela="props.conteudo as ITabela"
+      />
     </div>
 
-    <div class="col-2 align-items-center">
+    <div class="col-1 align-items-center">
       <div class="card_footer">
         <Tag
           class="max-w-5rem"
@@ -23,17 +30,6 @@
           :value="props.conteudo?.tipoConteudo"
         />
         <div class="flex justify-content-center align-items-center">
-          <Button
-            text
-            rounded
-            severity="secondary"
-            icon="pi pi-pen-to-square"
-            pt:root:style="height: 30px; width: 30px"
-            pt:icon:style="fontSize: 12px"
-            v-show="isShowBtnEditar"
-            :disabled="!!store.lockDebounceNotacaoParagrafo"
-            @click="handleEditar"
-          />
           <Button
             text
             rounded
@@ -62,14 +58,14 @@
 
 <script setup lang="ts">
 import type { ICardNotacao } from '@/components/editor/body/interfaces/ICard'
-import type { IParagrafo } from '@/model/IBlueprint'
+import type { IParagrafo, ITabela } from '@/model/IBlueprint'
+import { useStoreBase } from '@/stores/storeBase'
 import { computed } from 'vue'
 import NotacaoParagrafoCmp from '../notacao/components/NotacaoParagrafoCmp.vue'
-import { CardItemTagColor } from './CardItemTagColor'
-import { useStoreBase } from '@/stores/storeBase'
+import NotacaoTabelaCmp from '../notacao/components/NotacaoTabelaCmp.vue'
+import { BorderLeftColor } from './BorderLeftColor'
 
 interface IEmit {
-  (nome: 'editar'): void
   (nome: 'duplicar'): void
   (nome: 'remover', item?: string): void
 }
@@ -78,13 +74,8 @@ const props = withDefaults(defineProps<ICardNotacao>(), { tipo: 'default' })
 const emit = defineEmits<IEmit>()
 const store = useStoreBase()
 
-const borderColor = computed(() => CardItemTagColor[props.conteudo?.tipoConteudo || 'default'])
+const borderColor = computed(() => BorderLeftColor[props.conteudo?.tipoConteudo || 'default'])
 
-const isShowBtnEditar = computed(() => {
-  return props.conteudo?.tipoConteudo === 'tabela'
-})
-
-const handleEditar = () => emit('editar')
 const handleDuplicar = () => emit('duplicar')
 
 const handleRemover = () => {
