@@ -1,5 +1,6 @@
-import { blueprintConstants } from '@/constants/blueprintConstants'
+import { appConstants } from '@/constants/appConstants'
 import type { IConteudo, IParagrafo } from '@/model/IBlueprint'
+import { appUtils } from './../utils/appUtils'
 
 const parseParagrafosFilhos = (html: string, filhos?: IConteudo[]): string => {
   if (filhos && filhos.length > 0) {
@@ -17,9 +18,9 @@ const parseFormatacaoBlueprintParaHtml = (texto: string): string => {
     const TAG_EM = '<em>$1</em>'
     const TAG_A = '<a href="$2">$1</a>'
 
-    texto = texto.replace(blueprintConstants.REGEX_IS_STRONG_BLUEPRINT, TAG_STRONG)
-    texto = texto.replace(blueprintConstants.REGEX_IS_ITALIC_BLUEPRINT, TAG_EM)
-    texto = texto.replace(blueprintConstants.REGEX_IS_LINK_BLUEPRINT, TAG_A)
+    texto = texto.replace(appConstants.REGEX_IS_STRONG_BLUEPRINT, TAG_STRONG)
+    texto = texto.replace(appConstants.REGEX_IS_ITALIC_BLUEPRINT, TAG_EM)
+    texto = texto.replace(appConstants.REGEX_IS_LINK_BLUEPRINT, TAG_A)
   }
 
   return texto
@@ -61,10 +62,6 @@ const parseHtmlToParagrafos = (paragrafoPrincipal: IParagrafo, nodes: NodeList) 
 
   if (nodes) paragrafoPrincipal.componentes = []
 
-  const gerarId = (): string => {
-    return `${Date.now() + Math.floor(Math.random() * 1000)}`
-  }
-
   const criarParagrafo = (id: string, textoFormatado: string) => {
     if (paragrafoAtual) {
       paragrafoAtual.componentes!.push({
@@ -73,7 +70,6 @@ const parseHtmlToParagrafos = (paragrafoPrincipal: IParagrafo, nodes: NodeList) 
         nivel: 0,
         texto: textoFormatado
       } as IParagrafo)
-
     } else {
       paragrafoPrincipal.componentes!.push({
         id,
@@ -99,17 +95,18 @@ const parseHtmlToParagrafos = (paragrafoPrincipal: IParagrafo, nodes: NodeList) 
     if (node.nodeType === Node.ELEMENT_NODE) {
       const elemento = node as HTMLElement
       const tag = elemento.tagName.toLowerCase()
-      const id = gerarId()
+      const id = appUtils.gerarId()
 
       if (tag === 'h3') {
         if (paragrafoAtual) {
           paragrafoPrincipal.componentes!.push(paragrafoAtual)
         }
         criarTitulo(id, elemento)
-
       } else if (elemento.textContent && elemento.childNodes.length > 0) {
         const textoFormatado = Array.from(elemento.childNodes).map(parseNodeHtmlParaTexto).join('')
         criarParagrafo(id, textoFormatado)
+      } else if (elemento.lastChild?.nodeName.toLowerCase() === 'br') {
+        criarParagrafo(id, '')
       }
     }
   })
@@ -125,10 +122,16 @@ const toHtml = (paragrafo: IParagrafo) => {
   if (paragrafo.tipoConteudo === 'paragrafo') {
     paragrafo.texto = parseFormatacaoBlueprintParaHtml(paragrafo.texto)
 
+    if (!paragrafo.id) paragrafo.id = appUtils.gerarId()
+
     if (paragrafo.nivel === 0) {
-      html += `<p>${paragrafo.texto}</p>`
+      if (paragrafo.texto) {
+        html += `<p id=${paragrafo.id}>${paragrafo.texto}</p>`
+      } else {
+        html += `<p id=${paragrafo.id}></br></p>`
+      }
     } else if (paragrafo.nivel === 3 || paragrafo.nivel === 4) {
-      html += `<br><h${paragrafo.nivel}>${paragrafo.titulo}</h${paragrafo.nivel}>`
+      html += `<h${paragrafo.nivel} id=${paragrafo.id}>${paragrafo.titulo}</h${paragrafo.nivel}>`
       html += paragrafo.texto || ''
     }
 

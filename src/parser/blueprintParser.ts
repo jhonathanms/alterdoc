@@ -1,4 +1,4 @@
-import { blueprintConstants } from '@/constants/blueprintConstants'
+import { appConstants } from '@/constants/appConstants'
 import type {
   ICitacao,
   ICodigo,
@@ -47,7 +47,7 @@ function extrairBloco(
   const linhaAtual = linhas[i].trim()
   const proximaLinha = linhas[i + 1]?.trim()
 
-  if (linhaAtual.match(blueprintConstants.REGEX_VERIFICA_NOTACAO_NOTE_OU_WARNING)) {
+  if (linhaAtual.match(appConstants.REGEX_VERIFICA_NOTACAO_NOTE_OU_WARNING)) {
     i = extrairNota(markdown, linhas, i, componentes)
   } else if (linhaAtual.startsWith('# Group')) {
     i = extrairGrupo(markdown, linhas, i, componentes)
@@ -65,8 +65,8 @@ function extrairBloco(
     i = extrairDetalhesRequest(linhas, i, componentes)
   } else if (
     linhaAtual.includes('|') &&
-    (linhaAtual.match(blueprintConstants.REGEX_IS_TABELA) ||
-      proximaLinha.match(blueprintConstants.REGEX_IS_TABELA))
+    (linhaAtual.match(appConstants.REGEX_IS_TABELA) ||
+      proximaLinha.match(appConstants.REGEX_IS_TABELA))
   ) {
     i = extrairTabela(linhas, i, componentes)
   } else if (linhaAtual) {
@@ -91,7 +91,7 @@ function extrairNota(
 
   while (
     proximaLinha < linhas.length &&
-    !linhas[proximaLinha].trim().match(blueprintConstants.REGEX_VERIFICA_NOTACAO_NOTE_FECHAMENTO) &&
+    !linhas[proximaLinha].trim().match(appConstants.REGEX_VERIFICA_NOTACAO_NOTE_FECHAMENTO) &&
     !linhas[proximaLinha].trim().startsWith('# Group') &&
     !linhas[proximaLinha].trim().startsWith('+')
   ) {
@@ -178,7 +178,7 @@ function extrairEndpoint(
   let indicePrincipal = indice
   const conteudoLinhaAtual = linhas[indicePrincipal].trim()
   let conteudoDaProxLinha = linhas[indicePrincipal]?.trim()
-  const match = conteudoLinhaAtual.match(blueprintConstants.REGEX_IS_TITULO_ENDPOINT_COMPLETO)
+  const match = conteudoLinhaAtual.match(appConstants.REGEX_IS_TITULO_ENDPOINT_COMPLETO)
 
   const nome = match?.[1] || ''
   const path = match?.[2] || ''
@@ -245,8 +245,8 @@ function extrairParagrafo(
        **/
       if (
         nivel === 2 &&
-        !titulo.match(blueprintConstants.REGEX_IS_TITULO_ENDPOINT) &&
-        !titulo.match(blueprintConstants.REGEX_IS_TITULO_REQUEST)
+        !titulo.match(appConstants.REGEX_IS_TITULO_ENDPOINT) &&
+        !titulo.match(appConstants.REGEX_IS_TITULO_REQUEST)
       ) {
         i += proximaLinha ? 1 : 2
         const sessaoParagrafo: IConteudo[] = []
@@ -255,7 +255,7 @@ function extrairParagrafo(
           i < linhas.length &&
           linhas[i].trim() &&
           !linhas[i].startsWith('## ') &&
-          !linhas[i].match(blueprintConstants.REGEX_VERIFICA_NOTACAO_NOTE)
+          !linhas[i].match(appConstants.REGEX_VERIFICA_NOTACAO_NOTE)
         ) {
           const resultado = extrairBloco(markdown, linhas, i, sessaoParagrafo)
           i = linhas[resultado]?.trim() ? resultado : resultado + 1
@@ -282,7 +282,7 @@ function extrairParagrafo(
           i < linhas.length &&
           linhas[i].trim() &&
           !linhas[i].startsWith('#') &&
-          !linhas[i].match(blueprintConstants.REGEX_VERIFICA_NOTACAO_NOTE)
+          !linhas[i].match(appConstants.REGEX_VERIFICA_NOTACAO_NOTE)
         ) {
           texto += ' ' + linhas[i].trim()
           i++
@@ -304,7 +304,7 @@ function extrairParagrafo(
     i++
 
     // Valida linha final de nota.
-  } else if (linhaAtual.trim().match(blueprintConstants.REGEX_VERIFICA_NOTACAO_NOTE_FECHAMENTO)) {
+  } else if (linhaAtual.trim().match(appConstants.REGEX_VERIFICA_NOTACAO_NOTE_FECHAMENTO)) {
     i++
   }
   // Agrupamento de Paragrafos simples de continuação.
@@ -478,7 +478,7 @@ function extrairParametros(linhas: string[], indice: number, componentes: IConte
 
 function criarParametros(parametros: string): IParametroProps {
   const parametrosExtraidos: IParametroProps = {}
-  const match = parametros.match(blueprintConstants.REGEX_IS_PARAMETRO)
+  const match = parametros.match(appConstants.REGEX_IS_PARAMETRO)
 
   if (match) {
     const nome = match[1]

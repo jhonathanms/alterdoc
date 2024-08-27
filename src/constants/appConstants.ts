@@ -1,4 +1,4 @@
-export const blueprintConstants = {
+export const appConstants = {
     REGEX_VERIFICA_NOTACAO_NOTE: /^:+\s*(note)?\s*/i,
     REGEX_VERIFICA_NOTACAO_WARNING: /^:+\s*(warning)?\s*/i,
     REGEX_VERIFICA_NOTACAO_NOTE_OU_WARNING: /^:+\s*(note|warning)\s*/i,
@@ -11,5 +11,6 @@ export const blueprintConstants = {
     REGEX_IS_PARAMETRO: /^\+\s*(\w+):\s*`(.+?)`\s*(?:\(([^)]+)\))?\s*-\s*(.*?)(?:\s*\+\s*Default:\s*`?([^`]+)`?)?$/,
     REGEX_IS_STRONG_BLUEPRINT: /\*\*(.*?)\*\*/g,
     REGEX_IS_ITALIC_BLUEPRINT: /\*(.*?)\*/g,
-    REGEX_IS_LINK_BLUEPRINT: /\[(.*?)\]\((.*?)\)/g
+    REGEX_IS_LINK_BLUEPRINT: /\[(.*?)\]\((.*?)\)/g,
+    TEMPO_ESPERA_DEBOUNCE: 1000
 }

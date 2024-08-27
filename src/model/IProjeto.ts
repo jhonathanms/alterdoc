@@ -23,4 +23,6 @@ export interface IModalBase {
   conteudo: any
   abrir: boolean
   isEdicao: boolean
+  maximize: boolean,
+  continuarAdicionando: boolean
 }

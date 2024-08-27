@@ -1,6 +1,6 @@
 <template>
   <Card class="card_item" :style="{ borderLeftColor: `var(${borderColor})` }" :pt="cardPT">
-    <template #title>{{ props.titulo }}</template>
+    <template v-if="!!props.titulo" #title>{{ props.titulo }}</template>
     <template #subtitle>{{ props.subtitulo }}</template>
     <template #footer>
       <div class="card_footer">

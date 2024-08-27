@@ -2,9 +2,9 @@
   <Dialog
     modal
     maximizable
-    :visible="props.visible"
+    :visible="store.modal.abrir"
     :draggable="false"
-    :header="props.header"
+    :header="store.modal.cabecalho"
     :style="{ minWidth: '50rem' }"
     :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
     @update:visible="handleFechar"
@@ -14,17 +14,17 @@
     <slot></slot>
     <template #footer>
       <div class="footer_container_acoes">
-        <div class="flex align-items-center" v-if="!isEdicao">
+        <div class="flex align-items-center" v-if="!store.modal.isEdicao">
           <Checkbox
             inputId="continuar-adicionando"
-            :modelValue="props.continuarAdicionando"
             :binary="true"
+            :modelValue="store.modal.continuarAdicionando"
             @update:modelValue="handleContinuarAdicionando"
           />
           <label for="continuar-adicionando" class="ml-2">Continuar adicionando</label>
         </div>
         <div class="footer_container_acoes_botoes">
-          <Button label="Cancelar" text severity="secondary" @click="handleCancelar" />
+          <Button label="Cancelar" text severity="secondary" @click="handleFechar" />
           <Button label="Gravar" autofocus @click="handleGravar" w-12 />
         </div>
       </div>
@@ -33,35 +33,22 @@
 </template>
 
 <script setup lang="ts">
+import { useStoreBase } from '@/stores/storeBase'
 import Checkbox from 'primevue/checkbox'
 
-type Props = {
-  visible: boolean
-  header: string
-  isEdicao: boolean
-  continuarAdicionando: boolean
-}
-
 interface IEmit {
-  (nome: 'fechar'): void
   (nome: 'gravar'): void
-  (nome: 'cancelar'): void
-  (nome: 'continuarAdicionando', value: any): void
-  (nome: 'maximize'): void
-  (nome: 'unMaximize'): void
 }
 
-const props = defineProps<Props>()
 const emit = defineEmits<IEmit>()
+const store = useStoreBase()
 
-const handleFechar = () => emit('fechar')
 const handleGravar = () => emit('gravar')
-const handleCancelar = () => emit('cancelar')
-const handleMaximize = () => emit('maximize')
-const handleUnMaximize = () => emit('unMaximize')
-
-const handleContinuarAdicionando = (value: any) => {
-  emit('continuarAdicionando', value)
+const handleFechar = () => store.setModal({ ...store.modal, abrir: false })
+const handleMaximize = () => store.setModalMaximize()
+const handleUnMaximize = () => store.setModalUnMaximize()
+const handleContinuarAdicionando = (value: boolean) => {
+  store.setModalContinuarAdicionando(value)
 }
 </script>
 

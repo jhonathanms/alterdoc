@@ -18,23 +18,9 @@
 
       <AcoesCmp />
 
-      <ModalBase
-        :visible="modal.abrir"
-        :header="modal.cabecalho"
-        :isEdicao="modal.isEdicao"
-        :continuarAdicionando="continuarAdicionando"
-        @maximize="setMaximize"
-        @unmaximize="setUnMaximize"
-        @fechar="fecharModal"
-        @cancelar="cancelarModal"
-        @gravar="gravarModal"
-        @continuarAdicionando="setContinuarAdicionando"
-      >
-        <ParagrafoCmp
-          :paragrafo="modal.conteudo"
-          :maximize="maximize"
-          v-if="modal.tipo === 'paragrafo'"
-        />
+      <ModalBase @gravar="gravarModal">
+        <ParagrafoCmp :paragrafo="store.modal.conteudo" v-if="store.modal.tipo === 'paragrafo'" />
+        <NotacaoCmp :notacao="store.modal.conteudo" v-if="store.modal.tipo === 'notacao'" />
       </ModalBase>
     </SplitterPanel>
 
@@ -47,46 +33,13 @@
 
 <script setup lang="ts">
 import type { IConteudo, IParagrafo } from '@/model/IBlueprint'
-import type { IModalBase } from '@/model/IProjeto'
 import { useStoreBase } from '@/stores/storeBase'
-import { reactive, ref } from 'vue'
 import AcoesCmp from './painelHome/acoes/AcoesCmp.vue'
-import CardItemCmp from './painelHome/card/CardItemCmp.vue'
+import CardItemCmp from './painelHome/card/CardItemEditorCmp.vue'
 import ModalBase from './painelHome/modal/ModalBase.vue'
 import ParagrafoCmp from './painelHome/paragrafo/ParagrafoCmp.vue'
 import PreviewCodigoCmp from './painelPreview/PreviewCodigoCmp.vue'
 import PreviewHtmlCmp from './painelPreview/PreviewHtmlCmp.vue'
-
-const modal = reactive<IModalBase>({
-  cabecalho: '',
-  tipo: 'default',
-  conteudo: {},
-  abrir: false,
-  isEdicao: false
-} as IModalBase)
-
-const setModal = (props: IModalBase) => {
-  modal.cabecalho = props.cabecalho
-  modal.tipo = props.tipo
-  modal.conteudo = props.conteudo
-  modal.abrir = props.abrir
-  modal.isEdicao = props.isEdicao
-}
-
-const maximize = ref(false)
-const continuarAdicionando = ref(false)
-
-const setMaximize = () => {
-  maximize.value = true
-}
-
-const setUnMaximize = () => {
-  maximize.value = false
-}
-
-const setContinuarAdicionando = (value: boolean) => {
-  continuarAdicionando.value = value
-}
 
 const store = useStoreBase()
 
@@ -120,23 +73,20 @@ const obterIdentificacaoDoConteudo = (item: IConteudo): { titulo: string; subTit
 }
 
 const abrirModalEdicao = (conteudo: IConteudo) => {
-  setModal({
+  store.setModal({
+    ...store.modal,
     cabecalho: obterIdentificacaoDoConteudo(conteudo).titulo,
     tipo: conteudo.tipoConteudo,
     conteudo: conteudo,
     abrir: true,
-    isEdicao: true
+    isEdicao: true,
+    continuarAdicionando: false
   })
 }
 
-const fecharModal = () => setModal({ ...modal, abrir: false })
-
-const cancelarModal = () => setModal({ ...modal, abrir: false })
-
-const gravarModal = () => { 
-  setModal({ ...modal, abrir: false })
+const gravarModal = () => {
+  store.setModal({ ...store.modal, abrir: false })
 }
-
 </script>
 
 <style scoped lang="scss">

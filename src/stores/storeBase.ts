@@ -1,6 +1,5 @@
-import type { IConteudo, IParagrafo } from '@/model/IBlueprint'
-import type { IProjeto, IRecentes } from '@/model/IProjeto'
-import { paragrafoParser } from '@/parser/paragrafoParser'
+import type { IConteudo } from '@/model/IBlueprint'
+import type { IModalBase, IProjeto, IRecentes } from '@/model/IProjeto'
 import { defineStore } from 'pinia'
 import { v4 as uuidv4 } from 'uuid'
 import { reactive, ref } from 'vue'
@@ -12,6 +11,30 @@ export const useStoreBase = defineStore('storeBase', () => {
   const conteudoObj = reactive<IConteudo[]>([])
   const togglePanelHome = ref(true)
   const recentes = reactive<IRecentes[]>([])
+  const modal = reactive<IModalBase>({
+    cabecalho: '',
+    tipo: 'default',
+    conteudo: {},
+    abrir: false,
+    isEdicao: false,
+    maximize: false,
+    continuarAdicionando: false
+  } as IModalBase)
+
+  const notacaoItens = reactive<IConteudo[]>([])
+  const lockDebounceNotacaoParagrafo = ref(false)
+
+  const setModalMaximize = () => {
+    modal.maximize = true
+  }
+
+  const setModalUnMaximize = () => {
+    modal.maximize = false
+  }
+
+  const setModalContinuarAdicionando = (value: boolean) => {
+    modal.continuarAdicionando = value
+  }
 
   const projeto = reactive<IProjeto>({
     formato: '1A',
@@ -58,6 +81,14 @@ export const useStoreBase = defineStore('storeBase', () => {
     }
   }
 
+  const setModal = (props: IModalBase) => {
+    Object.assign(modal, props)
+  }
+
+  const setLockDebounceNotacaoParagrafo = (valor: boolean) => {
+    lockDebounceNotacaoParagrafo.value = valor
+  }
+
   return {
     togglePreview,
     markdown,
@@ -66,6 +97,9 @@ export const useStoreBase = defineStore('storeBase', () => {
     togglePanelHome,
     recentes,
     projeto,
+    modal,
+    notacaoItens,
+    lockDebounceNotacaoParagrafo,
     setTogglePreview,
     setMarkdown,
     setConteudoBlueprint,
@@ -73,5 +107,10 @@ export const useStoreBase = defineStore('storeBase', () => {
     setTogglePanelHome,
     setRecentes,
     setProjeto,
+    setModal,
+    setModalUnMaximize,
+    setModalMaximize,
+    setModalContinuarAdicionando,
+    setLockDebounceNotacaoParagrafo
   }
 })

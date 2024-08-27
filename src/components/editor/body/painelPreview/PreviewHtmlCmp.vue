@@ -17,7 +17,6 @@ const url = ref<string>('https://documentacao-shop.alterdata.com.br/delivery-doc
 
 function onIframeFocus() {
   iframeRef.value?.blur();
-  iframeRef.value?.contentWindow?.blur();
   iframeRef.value?.parentElement?.focus();
 }
 
