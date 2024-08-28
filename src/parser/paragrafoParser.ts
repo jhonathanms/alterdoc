@@ -97,11 +97,14 @@ const parseHtmlToParagrafos = (paragrafoPrincipal: IParagrafo, nodes: NodeList) 
   }
 
   nodes.forEach((node) => {
+  
     if (node.nodeType === Node.ELEMENT_NODE) {
       const elemento = node as HTMLElement
       const tag = elemento.tagName.toLowerCase()
       const id = appUtils.gerarId()
 
+      if(elemento.id === paragrafoPrincipal.id) return
+      
       if (tag === 'h3') {
         if (paragrafoAtual) {
           paragrafoPrincipal.componentes!.push(paragrafoAtual)

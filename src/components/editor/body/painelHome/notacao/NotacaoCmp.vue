@@ -32,7 +32,7 @@
 import type { INota, IParagrafo, ITabela } from '@/model/IBlueprint'
 import { useStoreBase } from '@/stores/storeBase'
 import { appUtils } from '@/utils/appUtils'
-import { computed, reactive } from 'vue'
+import { computed, onMounted, reactive } from 'vue'
 
 interface IProps {
   notacao: INota
@@ -99,4 +99,33 @@ const handleAddTabela = () => {
     tipoConteudo: 'tabela'
   } as ITabela)
 }
+
+const carregarParagrafos = () => {
+  props.notacao.componentes?.[0].componentes
+    ?.filter((c) => c.tipoConteudo === 'paragrafo')
+    .forEach((p) => {
+      const paragrafo = p as IParagrafo
+
+      if (!store.notacaoItens.some((item) => item.id === paragrafo.id)) {
+        store.notacaoItens.push(paragrafo)
+      }
+    })
+}
+
+const carregarTabelas = () => {
+  props.notacao.componentes?.[0].componentes
+    ?.filter((c) => c.tipoConteudo === 'tabela')
+    .forEach((t) => {
+      const tabela = t as ITabela
+
+      if (!store.notacaoItens.some((item) => item.id === tabela.id)) {
+        store.notacaoItens.push(tabela)
+      }
+    })
+}
+
+onMounted(() => {
+  carregarParagrafos()
+  carregarTabelas()
+})
 </script>

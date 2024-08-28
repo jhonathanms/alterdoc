@@ -40,6 +40,7 @@ import ModalBase from './painelHome/modal/ModalBase.vue'
 import ParagrafoCmp from './painelHome/paragrafo/ParagrafoCmp.vue'
 import PreviewCodigoCmp from './painelPreview/PreviewCodigoCmp.vue'
 import PreviewHtmlCmp from './painelPreview/PreviewHtmlCmp.vue'
+import NotacaoCmp from './painelHome/notacao/NotacaoCmp.vue'
 
 const store = useStoreBase()
 

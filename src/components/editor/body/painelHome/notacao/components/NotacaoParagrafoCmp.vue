@@ -64,6 +64,7 @@ watch(
 onMounted(() => {
   if (props.paragrafo) {
     const paragrafo = paragrafoParser.toHtml(props.paragrafo)
+    
     setConteudoHtml(paragrafo)
   }
 })
