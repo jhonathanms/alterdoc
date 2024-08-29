@@ -20,7 +20,7 @@
 
       <ModalBase @gravar="gravarModal">
         <ParagrafoCmp :paragrafo="store.modal.conteudo" v-if="store.modal.tipo === 'paragrafo'" />
-        <NotacaoCmp :notacao="store.modal.conteudo" v-if="store.modal.tipo === 'notacao'" />
+        <NotacaoCmp ref="notacaoRef" :notacao="store.modal.conteudo" v-if="store.modal.tipo === 'notacao'" />
       </ModalBase>
     </SplitterPanel>
 
@@ -41,8 +41,10 @@ import ParagrafoCmp from './painelHome/paragrafo/ParagrafoCmp.vue'
 import PreviewCodigoCmp from './painelPreview/PreviewCodigoCmp.vue'
 import PreviewHtmlCmp from './painelPreview/PreviewHtmlCmp.vue'
 import NotacaoCmp from './painelHome/notacao/NotacaoCmp.vue'
+import { ref } from 'vue'
 
 const store = useStoreBase()
+const notacaoRef = ref()
 
 const isParagrafo = (item: IConteudo) => {
   return item && item.tipoConteudo !== 'configuracao' && (item as IParagrafo).nivel !== 0
@@ -86,6 +88,8 @@ const abrirModalEdicao = (conteudo: IConteudo) => {
 }
 
 const gravarModal = () => {
+  if (notacaoRef.value) notacaoRef.value.atualizarConteudoModal()
+  
   store.setModal({ ...store.modal, abrir: false })
 }
 </script>

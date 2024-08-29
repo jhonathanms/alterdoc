@@ -6,27 +6,16 @@
       width: '100%'
     }"
   >
-    <div class="col-1 align-items-center">
+    <div class="col-1 align-items-center hidden">
       <span class="pi pi-bars" style="cursor: grab"></span>
     </div>
 
-    <div class="col-10 align-items-center">
-      <NotacaoParagrafoCmp
-        v-if="props.conteudo?.tipoConteudo === 'paragrafo'"
-        :paragrafo="props.conteudo as IParagrafo"
-      />
-      <NotacaoTabelaCmp
-        v-if="props.conteudo?.tipoConteudo === 'tabela'"
-        :tabela="props.conteudo as ITabela"
-      />
-    </div>
-
-    <div class="col-1 align-items-center">
-      <div class="card_footer">
+    <div class="col-12 align-items-center">
+      <div class="card_acoes">
         <Tag
-          class="max-w-5rem"
+          class="max-w-7rem"
           rounded
-          style="height: 20px; color: var(--surface-500); background-color: var(--bg-default)"
+          style="color: var(--surface-500); background-color: var(--bg-default)"
           :value="props.conteudo?.tipoConteudo"
         />
         <div class="flex justify-content-center align-items-center">
@@ -52,6 +41,17 @@
           />
         </div>
       </div>
+    </div>
+
+    <div class="col-12 align-items-center">
+      <NotacaoParagrafoCmp
+        v-if="props.conteudo?.tipoConteudo === 'paragrafo'"
+        :paragrafo="props.conteudo as IParagrafo"
+      />
+      <NotacaoTabelaCmp
+        v-if="props.conteudo?.tipoConteudo === 'tabela'"
+        :tabela="props.conteudo as ITabela"
+      />
     </div>
   </div>
 </template>
@@ -92,7 +92,7 @@ const handleRemover = () => {
   );
 }
 
-.card_footer {
-  @include styleclass('flex flex-column gap-2 h-full w-full justify-content-end align-items-end');
+.card_acoes {
+  @include styleclass('flex gap-2 h-full w-full justify-content-between align-items-end');
 }
 </style>

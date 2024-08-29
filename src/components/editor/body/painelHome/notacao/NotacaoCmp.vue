@@ -32,7 +32,7 @@
 import type { INota, IParagrafo, ITabela } from '@/model/IBlueprint'
 import { useStoreBase } from '@/stores/storeBase'
 import { appUtils } from '@/utils/appUtils'
-import { computed, onMounted, reactive } from 'vue'
+import { computed, onMounted, onUnmounted, reactive } from 'vue'
 
 interface IProps {
   notacao: INota
@@ -70,11 +70,14 @@ const titulo = computed(() => {
 
 const handleTitulo = (e: Event) => {
   const valor = (e.target as HTMLInputElement).value
-  store.projeto.conteudo
-    ?.filter((c) => c.id === props.notacao.id)
-    .forEach((c) => {
-      ;(c as INota).titulo = valor
-    })
+  // store.projeto.conteudo
+  //   ?.filter((c) => c.id === props.notacao.id)
+  //   .forEach((c) => {
+  //     (c as INota).titulo = valor
+  //   })
+  const paragrafoNotacao = store.modal.conteudo.componentes?.[0] as IParagrafo
+  paragrafoNotacao.titulo = valor
+
   store.setModal({ ...store.modal, cabecalho: valor })
 }
 
@@ -104,9 +107,10 @@ const carregarParagrafos = () => {
   props.notacao.componentes?.[0].componentes
     ?.filter((c) => c.tipoConteudo === 'paragrafo')
     .forEach((p) => {
-      const paragrafo = p as IParagrafo
+      const paragrafo = { ...(p as IParagrafo) }
 
       if (!store.notacaoItens.some((item) => item.id === paragrafo.id)) {
+        if (!paragrafo.componentes) paragrafo.componentes = []
         store.notacaoItens.push(paragrafo)
       }
     })
@@ -124,8 +128,26 @@ const carregarTabelas = () => {
     })
 }
 
+const atualizarConteudoModal = () => {
+  const paragrafoNotacao = store.modal.conteudo.componentes?.[0] as IParagrafo
+  paragrafoNotacao.componentes?.splice(
+    0,
+    paragrafoNotacao.componentes.length,
+    ...store.notacaoItens
+  )
+}
+
+defineExpose({
+  atualizarConteudoModal
+})
+
 onMounted(() => {
   carregarParagrafos()
   carregarTabelas()
+})
+
+onUnmounted(() => {
+  store.notacaoItens.splice(0, store.notacaoItens.length)
+  store.setModal({})
 })
 </script>

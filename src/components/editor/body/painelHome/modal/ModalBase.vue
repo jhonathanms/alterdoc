@@ -45,7 +45,7 @@ const emit = defineEmits<IEmit>()
 const store = useStoreBase()
 
 const handleGravar = () => emit('gravar')
-const handleFechar = () => store.setModal({ ...store.modal, abrir: false })
+const handleFechar = () => store.setModal({ abrir: false })
 const handleMaximize = () => store.setModalMaximize()
 const handleUnMaximize = () => store.setModalUnMaximize()
 const handleContinuarAdicionando = (value: boolean) => {

@@ -31,6 +31,7 @@ const parseFormatacaoBlueprintParaHtml = (texto: string): string => {
 const parseNodeHtmlParaTexto = (node: Node): string => {
   if (node.nodeType === Node.TEXT_NODE) {
     return (node as Text).textContent || ''
+
   } else if (node.nodeType === Node.ELEMENT_NODE) {
     const elemento = node as HTMLElement
     const tag = elemento.tagName.toLowerCase()
@@ -96,14 +97,24 @@ const parseHtmlToParagrafos = (paragrafoPrincipal: IParagrafo, nodes: NodeList) 
     }
   }
 
-  nodes.forEach((node) => {
+  nodes.forEach((node, indice) => {
   
     if (node.nodeType === Node.ELEMENT_NODE) {
       const elemento = node as HTMLElement
       const tag = elemento.tagName.toLowerCase()
       const id = appUtils.gerarId()
 
-      if(elemento.id === paragrafoPrincipal.id) return
+      if(elemento.id === paragrafoPrincipal.id) {
+        const textoFormatado = Array.from(elemento.childNodes).map(parseNodeHtmlParaTexto).join('')
+       
+        // if( elemento.textContent?.includes(paragrafoPrincipal.texto) || textoFormatado?.includes(paragrafoPrincipal.texto)){
+          if(indice === 0) {paragrafoPrincipal.texto = textoFormatado} else {
+            criarParagrafo(id, textoFormatado)
+          }
+   
+        return
+
+      }
       
       if (tag === 'h3') {
         if (paragrafoAtual) {

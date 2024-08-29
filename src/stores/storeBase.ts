@@ -81,8 +81,19 @@ export const useStoreBase = defineStore('storeBase', () => {
     }
   }
 
-  const setModal = (props: IModalBase) => {
-    Object.assign(modal, props)
+  const setModal = (props: Partial<IModalBase>) => {
+    Object.assign(modal, {
+      ...({
+        cabecalho: '',
+        tipo: 'default',
+        conteudo: {},
+        abrir: false,
+        isEdicao: false,
+        maximize: false,
+        continuarAdicionando: false
+      } as IModalBase),
+      ...props
+    })
   }
 
   const setLockDebounceNotacaoParagrafo = (valor: boolean) => {

@@ -26,20 +26,36 @@ interface IProps {
 }
 
 const props = defineProps<IProps>()
+
 const store = useStoreBase()
 const conteudoHtml = ref('')
 
 const setConteudoHtml = (valor: string) => (conteudoHtml.value = valor)
 
 const setParagrafo = () => {
-  paragrafoParser.fromHtml(props.paragrafo, conteudoHtml.value)
+  const paragrafoLocal: IParagrafo = { ...props.paragrafo }
+
+  paragrafoParser.fromHtml(paragrafoLocal, conteudoHtml.value)
   store.notacaoItens
-    .filter((n) => n.id === props.paragrafo.id)
+    .filter((n) => n.id === paragrafoLocal.id)
     .forEach((n) => {
-      if (props.paragrafo.componentes) {
-        n.componentes?.splice(0, n.componentes.length, ...props.paragrafo.componentes)
+      if (paragrafoLocal.componentes) {
+        const notacaoParagrafo = n as IParagrafo
+        Object.assign(notacaoParagrafo, paragrafoLocal)
       }
     })
+}
+
+function carregarParagrafo(paragrafo?: IParagrafo) {
+  let paragrafoLocal = {} as IParagrafo
+  if (paragrafo) {
+    paragrafoLocal = { ...paragrafo }
+  } else {
+    paragrafoLocal = { ...props.paragrafo }
+  }
+
+  const html = paragrafoParser.toHtml(paragrafoLocal)
+  setConteudoHtml(html)
 }
 
 const debounceSetParagrafo = debounce(() => {
@@ -55,17 +71,14 @@ watch(conteudoHtml, () => {
 
 watch(
   () => props.paragrafo,
-  (valor) => {
-    const paragrafo = paragrafoParser.toHtml(valor)
-    setConteudoHtml(paragrafo)
+  (novoParagrafo) => {
+    carregarParagrafo(novoParagrafo)
   }
 )
 
 onMounted(() => {
   if (props.paragrafo) {
-    const paragrafo = paragrafoParser.toHtml(props.paragrafo)
-    
-    setConteudoHtml(paragrafo)
+    carregarParagrafo()
   }
 })
 </script>
