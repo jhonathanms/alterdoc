@@ -8,6 +8,8 @@ export interface FilePickerOptions {
   }>;
 }
 
-interface Window {
-  showSaveFilePicker: (options?: FilePickerOptions) => Promise<FileSystemFileHandle>;
+declare global {
+  interface Window {
+    showSaveFilePicker: (options?: FilePickerOptions) => Promise<FileSystemFileHandle>;
+  }
 }
